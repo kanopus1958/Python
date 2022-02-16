@@ -1,0 +1,22 @@
+*******************************************************************************
+* dauerping Parameter Datei: dauerping.input                                  *
+* Version/Stand            : V01.03 06.12.2021                                *
+* Beschreibung             : Dauer ping an ausgewählte Rechner                *
+* Quelle                   : jeder Raspberry im Netzwerk Andromeda            *
+* Ziel                     : unten aufgefuehrte Hosts im Netzwerk Andromeda   *
+*******************************************************************************
+
+@@@PING@@@,Merkur
+@@@PING@@@,Robot-01
+@@@PING@@@,Robot-02
+@@@PING@@@,Robot-03
+@@@PING@@@,Uranus
+@@@PING@@@,Neptun
+@@@PING@@@,Sirius
+@@@PING@@@,Cygnus
+@@@PING@@@,Atair
+@@@PING@@@,Orion
+@@@PING@@@,Proxmox-01
+@@@PING@@@,NAS-Andromeda
+@@@PING@@@,NAS-Stardust
+@@@PING@@@,NAS-Blackhole

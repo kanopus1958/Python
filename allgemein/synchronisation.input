@@ -1,0 +1,32 @@
+*******************************************************************************
+* rsync Parameter Datei    : synchronisation.input                            *
+* Version/Stand            : V01.04 02.12.2021                                *
+* Beschreibung             : Synchronisation ausgewählter Unterverzeichnisse  *
+* Quelle                   : Raspberry Entwicklungsrechner (Merkur)           *
+* Ziel                     : Satelliten (Robot-01-03, Uranus,Neptun)          *
+*******************************************************************************
+
+@@@RS@@@,/home/pi/Python/,pi@Robot-01:/home/pi/Python
+@@@RS@@@,/home/pi/Scripte/,pi@Robot-01:/home/pi/Scripte
+@@@RS@@@,/home/pi/.bash_aliases,pi@Robot-01:/home/pi/.bash_aliases
+@@@RS@@@,/home/pi/.bashrc,pi@Robot-01:/home/pi/.bashrc
+
+@@@RS@@@,/home/pi/Python/,pi@Robot-02:/home/pi/Python
+@@@RS@@@,/home/pi/Scripte/,pi@Robot-02:/home/pi/Scripte
+@@@RS@@@,/home/pi/.bash_aliases,pi@Robot-02:/home/pi/.bash_aliases
+@@@RS@@@,/home/pi/.bashrc,pi@Robot-02:/home/pi/.bashrc
+
+@@@RS@@@,/home/pi/Python/,pi@Robot-03:/home/pi/Python
+@@@RS@@@,/home/pi/Scripte/,pi@Robot-03:/home/pi/Scripte
+@@@RS@@@,/home/pi/.bash_aliases,pi@Robot-03:/home/pi/.bash_aliases
+@@@RS@@@,/home/pi/.bashrc,pi@Robot-03:/home/pi/.bashrc
+
+@@@RS@@@,/home/pi/Python/,pi@Uranus:/home/pi/Python
+@@@RS@@@,/home/pi/Scripte/,pi@Uranus:/home/pi/Scripte
+@@@RS@@@,/home/pi/.bash_aliases,pi@Uranus:/home/pi/.bash_aliases
+@@@RS@@@,/home/pi/.bashrc,pi@Uranus:/home/pi/.bashrc
+
+@@@RS@@@,/home/pi/Python/,rolf@Neptun:/home/rolf/Python
+@@@RS@@@,/home/pi/Scripte/,rolf@Neptun:/home/rolf/Scripte
+@@@RS@@@,/home/pi/.bash_aliases,rolf@Neptun:/home/rolf/.bash_aliases
+@@@RS@@@,/home/pi/.bashrc,rolf@Neptun:/home/rolf/.bashrc
