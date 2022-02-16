@@ -19,7 +19,7 @@ import smtplib
 import EMail_credentials as cred
 
 def _main():
-    # show_header(G_HEADER_1, G_HEADER_2, __file__, G_OS)
+    show_header(G_HEADER_1, G_HEADER_2, __file__, G_OS)
 
     bestand = {"AMD.DE": {"Bez": "Advanced Micro Devices, Inc.", "Anz": 3},
             "MBG.DE": {"Bez": "Mercedes-Benz Group AG", "Anz": 1},
