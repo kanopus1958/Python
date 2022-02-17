@@ -4,7 +4,7 @@
 # Modul        : rwm_mod01.py
 # Version      : 1.03
 # SW-Stand     : 14.02.2022
-# Autor        : Rolf Weiss
+# Autor        : Kanopus1958
 # Beschreibung : Definition von allgemeinen Funktionen Teil 01
 #                getkey()
 #                getch()

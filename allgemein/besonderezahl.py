@@ -2,8 +2,8 @@
 
 # Programm     : besonderezahl.py
 # Version      : 1.01
-# SW-Stand     : 15.02.2022
-# Autor        : Rolf Weiss
+# SW-Stand     : 17.02.2022
+# Autor        : Kanopus1958
 # Beschreibung : Zahl mit Persistence 11 ist 277777788888899
 G_OS = ('Raspbian','Debian','Windows') 
 G_HEADER_1 = '# Berechnung Persistence      '

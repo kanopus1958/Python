@@ -2,8 +2,8 @@
 
 # Programm     : pystress.py
 # Version      : 1.00
-# SW-Stand     : 30.04.2021
-# Autor        : Rolf Weiss
+# SW-Stand     : 17.02.2022
+# Autor        : Kanopus1958
 # Beschreibung : Stresstest für alle CPUs (Source von GitHub)
 G_OS = ('Raspbian','Debian','Windows') 
 G_HEADER_1 = '# Stresstest Rechner CPUs     '

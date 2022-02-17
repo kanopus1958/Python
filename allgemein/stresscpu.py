@@ -2,8 +2,8 @@
 
 # Programm     : stresscpu.py
 # Version      : 1.03
-# SW-Stand     : 14.02.2022
-# Autor        : Rolf Weiss
+# SW-Stand     : 17.02.2022
+# Autor        : Kanopus1958
 # Beschreibung : Anzeige von System Informationen
 G_OS = ('Raspbian','Debian','Windows') 
 G_HEADER_1 = '# Stresstest Rechner CPUs     '

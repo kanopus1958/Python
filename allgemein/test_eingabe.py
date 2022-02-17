@@ -2,8 +2,8 @@
 
 # Programm     : test_eingabe.py
 # Version      : 1.00
-# SW-Stand     : 14.02.2022
-# Autor        : Rolf Weiss
+# SW-Stand     : 17.02.2022
+# Autor        : Kanopus1958
 # Beschreibung : Test von Eingabe- und Tastenüberwachung
 G_OS = ('Raspbian','Debian','Windows') 
 G_HEADER_1 = '# Test Eingabe-/Tasten-Funktio'

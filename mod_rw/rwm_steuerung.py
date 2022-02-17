@@ -4,7 +4,7 @@
 # Modul        : rwn_steuerung.py
 # Version      : 1.01
 # SW-Stand     : 12.02.2022
-# Autor        : Rolf Weiss
+# Autor        : Kanopus1958
 # Beschreibung : Definition von Steuerungs-Sequenzen
 #                Cursor-Position, Farben und Tastencodes
 

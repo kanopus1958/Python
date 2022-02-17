@@ -2,8 +2,8 @@
 
 # Programm     : synchronisation.py
 # Version      : 1.02
-# SW-Stand     : 14.02.2022
-# Autor        : Rolf Weiss
+# SW-Stand     : 17.02.2022
+# Autor        : Kanopus1958
 # Beschreibung : rsync von ausgewählten Verzeichnissen auf mehrere Ziel-Rechner
 G_OS = ('Raspbian','Debian') 
 G_HEADER_1 = '# RSYNC wichtiger Dateien auf '

@@ -2,8 +2,8 @@
 
 # Programm     : reiskorn.py
 # Version      : 1.01
-# SW-Stand     : 12.02.2022
-# Autor        : Rolf Weiss
+# SW-Stand     : 17.02.2022
+# Autor        : Kanopus1958
 # Beschreibung : Reiskorn Beispiel in Python
 G_OS = ('Raspbian','Debian','Windows') 
 G_HEADER_1 = '# Reiskorn   (Python-Beispiel)'

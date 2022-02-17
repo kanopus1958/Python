@@ -3,7 +3,7 @@
 # Programm     : code_template.py
 # Version      : 1.00
 # SW-Stand     : 16.02.2022
-# Autor        : Rolf Weiss
+# Autor        : Kanopus1958
 # Beschreibung : Code Template Datei für Python-Profamme RW
 G_OS = ('Raspbian','Debian','Windows') 
 G_HEADER_1 = '# Code Template für Python-Pro'

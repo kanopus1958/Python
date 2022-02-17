@@ -2,8 +2,8 @@
 
 # Programm     : robot-control.py
 # Version      : 1.00
-# SW-Stand     : 12.02.2022
-# Autor        : Rolf Weiss
+# SW-Stand     : 17.02.2022
+# Autor        : Kanopus1958
 # Beschreibung : Steuerung eines Roboter-Autos mit Tastatureingaben
 G_OS = ('Raspbian','Debian') 
 G_HEADER_1 = '# Steuerung Roboter-Auto mit T'

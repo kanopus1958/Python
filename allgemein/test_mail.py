@@ -2,8 +2,8 @@
 
 # Programm     : test_mail.py
 # Version      : 1.00
-# SW-Stand     : 16.02.2022
-# Autor        : Rolf Weiss
+# SW-Stand     : 17.02.2022
+# Autor        : Kanopus1958
 # Beschreibung : Ermittlung Depotbestand und Versand per Mail
 
 G_OS = ('Windows') 
@@ -14,7 +14,7 @@ from rwm_mod01 import show_header
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import EMail_credentials as cred
+import rwm__credentials01 as cred
 
 def _main():
     show_header(G_HEADER_1, G_HEADER_2, __file__, G_OS)

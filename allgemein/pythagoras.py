@@ -2,8 +2,8 @@
 
 # Programm     : pythagoras.py
 # Version      : 1.01
-# SW-Stand     : 12.02.2022
-# Autor        : Rolf Weiss
+# SW-Stand     : 17.02.2022
+# Autor        : Kanopus1958
 # Beschreibung : Berechnung von Tripeln die a^2 + b^2 = c^2 erfüllen
 G_OS = ('Raspbian','Debian','Windows') 
 G_HEADER_1 = '# Pythagoras (Tripel die a^2 +'

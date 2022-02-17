@@ -2,8 +2,8 @@
 
 # Programm     : test_psutil.py
 # Version      : 1.02
-# SW-Stand     : 14.02.2022
-# Autor        : Rolf Weiss
+# SW-Stand     : 17.02.2022
+# Autor        : Kanopus1958
 # Beschreibung : Test von psutil Funktionalitäten
 G_OS = ('Raspbian','Debian','Windows') 
 G_HEADER_1 = '# Test psutil Funktionen      '

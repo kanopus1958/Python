@@ -2,8 +2,8 @@
 
 # Programm     : systeminfo.py
 # Version      : 1.04
-# SW-Stand     : 14.02.2022
-# Autor        : Rolf Weiss
+# SW-Stand     : 17.02.2022
+# Autor        : Kanopus1958
 # Beschreibung : Anzeige von System Informationen
 G_OS = ('Raspbian','Debian','Windows') 
 G_HEADER_1 = '# Monitor System Informationen'

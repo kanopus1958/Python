@@ -2,8 +2,8 @@
 
 # Programm     : test_test.py
 # Version      : 1.01
-# SW-Stand     : 12.02.2022
-# Autor        : Rolf Weiss
+# SW-Stand     : 17.02.2022
+# Autor        : Kanopus1958
 # Beschreibung : Allgemeines Testprogramm für Python
 G_OS = ('Raspbian','Debian','Windows') 
 G_HEADER_1 = '# Test von allerlei Python Fun'
@@ -190,8 +190,8 @@ def f1(name1, name2):
 def test_06():
     print(c.yellow, f"Test Funktion : ", \
           f"{sys._getframe(  ).f_code.co_name}", c.reset, sep="")
-    n1 = 'Rolf'
-    n2 = 'Weiss'
+    n1 = 'Kanopus'
+    n2 = '1958'
     proc = Process(target=f1, args=(n1, n2, ))
     proc.start()
     proc.join()

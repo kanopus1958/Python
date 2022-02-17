@@ -2,8 +2,8 @@
 
 # Programm     : primzahlen.py
 # Version      : 1.01
-# SW-Stand     : 12.06.2022
-# Autor        : Rolf Weiss
+# SW-Stand     : 17.02.2022
+# Autor        : Kanopus1958
 # Beschreibung : Berechnung von Primzahlen
 G_OS = ('Raspbian','Debian','Windows') 
 G_HEADER_1 = '# Primzahlenberechnung (mit St'
