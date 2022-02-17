@@ -15,7 +15,7 @@ from socket import gethostname
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import rwm__credentials01 as cred
+import rwm_credentials01 as cred
 
 def _main():
     show_header(G_HEADER_1, G_HEADER_2, __file__, G_OS)
@@ -26,9 +26,9 @@ def _main():
     mail_to = cred.TO
     mail_subject = "Test Mail von Rechner "+gethostname()
     mail_body = f'Hallo Empfänger,\n'
-    mail_body += f'dies ist eine Testmail generiert unter Python.2*\n'
+    mail_body += f'dies ist eine Testmail generiert unter Python.\n\n'
     mail_body += f'Mit freundlichen Grüßen\n'
-    mail_body += gethostename()
+    mail_body += gethostname()
 
     mimemsg = MIMEMultipart()
     mimemsg['From']=mail_from
@@ -42,7 +42,7 @@ def _main():
     connection.quit()
 
     if not error_text:
-        print(mail_body)
+        print(f'\n{mail_body}\n')
     else:
         print(f'Probleme beim Versand ({error_text})')
 
