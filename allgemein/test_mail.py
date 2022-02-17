@@ -11,6 +11,7 @@ G_HEADER_1 = '# Versand von eMail per gmail'
 G_HEADER_2 = '.com                        #'
 
 from rwm_mod01 import show_header
+from socket import gethostname
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -23,8 +24,11 @@ def _main():
     password = cred.PASSWORD
     mail_from = cred.FROM
     mail_to = cred.TO
-    mail_subject = "Test Subject"
-    mail_body = "This is a test message"
+    mail_subject = "Test Mail von Rechner "+gethostname()
+    mail_body = f'Hallo Empfänger,\n'
+    mail_body += f'dies ist eine Testmail generiert unter Python.2*\n'
+    mail_body += f'Mit freundlichen Grüßen\n'
+    mail_body += gethostename()
 
     mimemsg = MIMEMultipart()
     mimemsg['From']=mail_from
