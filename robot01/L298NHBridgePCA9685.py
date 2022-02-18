@@ -13,41 +13,39 @@
 # Das PWM Signal fuer die Steuerung der Drehgeschwindikgkeit der
 # Motoren wird von einem (z.B. Adafruit) Servo Kontroller PCA9685 generiert.
 
-# Dieses Programm muss von einem uebergeordneten Programm aufgerufen 
+# Dieses Programm muss von einem uebergeordneten Programm aufgerufen
 # werden, das die Steuerung des Programms L298NHBridge übernimmt.
 
 # Es wird die Klasse RPi.GPIO importiert, die die Ansteuerung
 # der GPIO-Pins des Raspberry Pi ermoeglicht.
 
 from __future__ import division
+import time
+import Adafruit_PCA9685
 import RPi.GPIO as io
 io.setmode(io.BCM)
 
-import time
-
-# Import Adafruit PCA9685 Bibliothek
-import Adafruit_PCA9685
 
 # Initialise the PCA9685 using the default address (0x40).
 PCA9685_pwm = Adafruit_PCA9685.PCA9685()
 
-# Hier wird die Frequenz des PWM Signals gesetzt. 
+# Hier wird die Frequenz des PWM Signals gesetzt.
 # Gute Erfahrungen fuer die L298N H-Bruecke sind mit 60Hz gemacht worden.
 # Auch arbeiten die meisten Servo Motoren mit 60Hz.
 PCA9685_pwm.set_pwm_freq(60)
 
-# Die Variable duty_cycle gibt die maximale Einschaltdauer der 
+# Die Variable duty_cycle gibt die maximale Einschaltdauer der
 # Motoren pro 100 Hertz vor. Dieser liegt zwischen 0 bis 4095.
 # Für die Geschwindigkeit der Motoren beginnt die Einschaltdauer
 # immer bei 0 und endet bei einem Wert ]0, 4095[.
 duty_cycle = 4095
 
-# Mit dem folgenden Aufruf werden eventuelle Warnungen die die 
+# Mit dem folgenden Aufruf werden eventuelle Warnungen die die
 # Klasse RPi.GPIO ausgibt deaktiviert.
 io.setwarnings(False)
 
-# Im folgenden Programmabschnitt wird die logische Verkabelung des 
-# Raspberry Pi im Programm abgebildet. Dazu werden den vom Motor 
+# Im folgenden Programmabschnitt wird die logische Verkabelung des
+# Raspberry Pi im Programm abgebildet. Dazu werden den vom Motor
 # Treiber bekannten Pins die GPIO Adressen zugewiesen.
 
 # --- START KONFIGURATION GPIO Adressen ---
@@ -62,8 +60,8 @@ IN4 = 26
 # ENA = Kanal 0
 # ENB = Kanal 1
 
-# Der Variable leftmotor_in1_pin wird die Varibale IN1 zugeorndet. 
-# Der Variable leftmotor_in2_pin wird die Varibale IN2 zugeorndet. 
+# Der Variable leftmotor_in1_pin wird die Varibale IN1 zugeorndet.
+# Der Variable leftmotor_in2_pin wird die Varibale IN2 zugeorndet.
 leftmotor_in1_pin = IN1
 leftmotor_in2_pin = IN2
 # Beide Variablen leftmotor_in1_pin und leftmotor_in2_pin werden als
@@ -72,43 +70,44 @@ leftmotor_in2_pin = IN2
 io.setup(leftmotor_in1_pin, io.OUT)
 io.setup(leftmotor_in2_pin, io.OUT)
 
-# Der Variable rightmotor_in1_pin wird die Varibale IN3 zugeorndet. 
-# Der Variable rightmotor_in2_pin wird die Varibale IN4 zugeorndet. 
+# Der Variable rightmotor_in1_pin wird die Varibale IN3 zugeorndet.
+# Der Variable rightmotor_in2_pin wird die Varibale IN4 zugeorndet.
 rightmotor_in1_pin = IN3
 rightmotor_in2_pin = IN4
-# Beide Variablen rightmotor_in1_pin und rightmotor_in2_pin werden 
+# Beide Variablen rightmotor_in1_pin und rightmotor_in2_pin werden
 # als Ausgaenge "OUT" definiert. Mit den beiden Variablen wird die
 # Drehrichtung der Motoren gesteuert.
 io.setup(rightmotor_in1_pin, io.OUT)
 io.setup(rightmotor_in2_pin, io.OUT)
 
 # Die GPIO Pins des Raspberry Pi werden initial auf False gesetzt.
-# So ist sichger gestellt, dass kein HIGH Signal anliegt und der 
+# So ist sichger gestellt, dass kein HIGH Signal anliegt und der
 # Motor Treiber nicht unbeabsichtigt aktiviert wird.
 io.output(leftmotor_in1_pin, False)
 io.output(leftmotor_in2_pin, False)
 io.output(rightmotor_in1_pin, False)
 io.output(rightmotor_in2_pin, False)
 
-# Die Funktion setMotorMode(motor, mode) legt die Drehrichtung der 
+# Die Funktion setMotorMode(motor, mode) legt die Drehrichtung der
 # Motoren fest. Die Funktion verfügt über zwei Eingabevariablen.
-# motor     -> diese Variable legt fest ob der linke oder rechte 
+# motor     -> diese Variable legt fest ob der linke oder rechte
 #              Motor ausgewaehlt wird.
 # mode      -> diese Variable legt fest welcher Modus gewaehlt ist
 # Beispiel:
 # setMotorMode(leftmotor, forward)   Der linke Motor ist gewaehlt
 #                                    und dreht vorwaerts .
-# setMotorMode(rightmotor, reverse)  Der rechte Motor ist ausgewaehlt 
+# setMotorMode(rightmotor, reverse)  Der rechte Motor ist ausgewaehlt
 #                                    und dreht rueckwaerts.
 # setMotorMode(rightmotor, stopp)    Der rechte Motor ist ausgewaehlt
 #                                    der gestoppt wird.
+
 
 def setMotorMode(motor, mode):
     if motor == "leftmotor":
         if mode == "reverse":
             io.output(leftmotor_in1_pin, True)
             io.output(leftmotor_in2_pin, False)
-        elif  mode == "forward":
+        elif mode == "forward":
             io.output(leftmotor_in1_pin, False)
             io.output(leftmotor_in2_pin, True)
         else:
@@ -117,8 +116,8 @@ def setMotorMode(motor, mode):
     elif motor == "rightmotor":
         if mode == "reverse":
             io.output(rightmotor_in1_pin, False)
-            io.output(rightmotor_in2_pin, True)      
-        elif  mode == "forward":
+            io.output(rightmotor_in2_pin, True)
+        elif mode == "forward":
             io.output(rightmotor_in1_pin, True)
             io.output(rightmotor_in2_pin, False)
         else:
@@ -130,11 +129,11 @@ def setMotorMode(motor, mode):
         io.output(rightmotor_in1_pin, False)
         io.output(rightmotor_in2_pin, False)
 
-# Die Funktion setMotorLeft(power) setzt die Geschwindigkeit der 
+# Die Funktion setMotorLeft(power) setzt die Geschwindigkeit der
 # linken Motoren. Die Geschwindigkeit wird als Wert zwischen -1
-# und 1 uebergeben. Bei einem negativen Wert sollen sich die Motoren 
-# rueckwaerts drehen ansonsten vorwaerts. 
-# Anschliessend werden aus den uebergebenen Werten die notwendigen 
+# und 1 uebergeben. Bei einem negativen Wert sollen sich die Motoren
+# rueckwaerts drehen ansonsten vorwaerts.
+# Anschliessend werden aus den uebergebenen Werten die notwendigen
 # %-Werte fuer das PWM Signal berechnet.
 # Beispiel:
 # Die Geschwindigkeit kann mit +1 (max) und -1 (min) gesetzt werden.
@@ -143,6 +142,8 @@ def setMotorMode(motor, mode):
 # SetMotorLeft(0.75)  -> der linke Motor dreht mit 75% vorwaerts
 # SetMotorLeft(-0.5)  -> der linke Motor dreht mit 50% rueckwaerts
 # SetMotorLeft(1)     -> der linke Motor dreht mit 100% vorwaerts
+
+
 def setMotorLeft(power):
     int(power)
     if power < 0:
@@ -163,11 +164,11 @@ def setMotorLeft(power):
         pwm = 0
     PCA9685_pwm.set_pwm(0, 0, pwm)
 
-# Die Funktion setMotorRight(power) setzt die Geschwindigkeit der 
-# rechten Motoren. Die Geschwindigkeit wird als Wert zwischen -1 
-# und 1 uebergeben. Bei einem negativen Wert sollen sich die Motoren 
-# rueckwaerts drehen ansonsten vorwaerts. 
-# Anschliessend werden aus den uebergebenen Werten die notwendigen 
+# Die Funktion setMotorRight(power) setzt die Geschwindigkeit der
+# rechten Motoren. Die Geschwindigkeit wird als Wert zwischen -1
+# und 1 uebergeben. Bei einem negativen Wert sollen sich die Motoren
+# rueckwaerts drehen ansonsten vorwaerts.
+# Anschliessend werden aus den uebergebenen Werten die notwendigen
 # %-Werte fuer das PWM Signal berechnet.
 # Beispiel:
 # Die Geschwindigkeit kann mit +1 (max) und -1 (min) gesetzt werden.
@@ -175,7 +176,9 @@ def setMotorLeft(power):
 # setMotorRight(0)     -> der rechte Motor dreht mit 0% ist gestoppt
 # setMotorRight(0.75)  -> der rechte Motor dreht mit 75% vorwaerts
 # setMotorRight(-0.5)  -> der rechte Motor dreht mit 50% rueckwaerts
-# setMotorRight(1)     -> der rechte Motor dreht mit 100% vorwaerts   
+# setMotorRight(1)     -> der rechte Motor dreht mit 100% vorwaerts
+
+
 def setMotorRight(power):
     int(power)
     if power < 0:
@@ -196,10 +199,12 @@ def setMotorRight(power):
         pwm = 0
     PCA9685_pwm.set_pwm(1, 0, pwm)
 
-# Die Funktion exit() setzt die Ausgaenge die den Motor Treiber 
-# steuern auf False. So befindet sich der Motor Treiber nach dem 
-# Aufruf derFunktion in einem gesicherten Zustand und die Motoren 
+# Die Funktion exit() setzt die Ausgaenge die den Motor Treiber
+# steuern auf False. So befindet sich der Motor Treiber nach dem
+# Aufruf derFunktion in einem gesicherten Zustand und die Motoren
 # sind gestopped.
+
+
 def exit():
     io.output(leftmotor_in1_pin, False)
     io.output(leftmotor_in2_pin, False)

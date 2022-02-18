@@ -5,27 +5,6 @@
 # SW-Stand     : 17.02.2022
 # Autor        : Kanopus1958
 # Beschreibung : Steuerung eines Roboter-Autos mit Tastatureingaben
-G_OS = ('Raspbian','Debian') 
-G_HEADER_1 = '# Steuerung Roboter-Auto mit T'
-G_HEADER_2 = 'astatureingaben              #'
-
-# ----------------------------------------------------------------------------
-# Globale Konstanten GC_<name> für alle Funktionen und Theads
-GC_log_ein = True               # Schalter für Logging Ein=True / Aus=False
-GC_log_detail = False           # Schalter für Detail-Logging Ein=True / Aus=False
-GC_speed_min = -1.0             # Minimale Geschwindigkeit der Motoren (rückwärts)
-GC_speed_max = +1.0             # Maximale Geschwindigkeit der Motoren (vorwärts)
-GC_speed_zero = 0.0             # Geschwindigkeit für Motoren AUS
-GC_mod_man = 'manuell'          # Modus manuelles Fahren
-GC_mod_auto = 'autonom'         # Modus autonomes Fahren
-# Globale Variablen GV_<name> für alle Funktionen und Theads
-GV_th_list = list()             # Identifier für die gestarteten Threads
-GV_speedleft = 0.0              # Geschwindigkeit Linke Motoren
-GV_speedright = 0.0             # Geschwindigkeit Rechte Motoren
-GV_modus = GC_mod_man           # Aktueller Fahrmodus
-GV_entfernung = 0               # Aktuelle Entfernung zum Hindernis vorne
-GV_anz_funk = 'START'           # Anzeige der aktuellen Funktion für die Motoren
-# ----------------------------------------------------------------------------
 
 import os
 import sys
@@ -40,6 +19,29 @@ import queue
 import datetime
 from time import sleep
 from random import randint
+
+G_OS = ('Raspbian', 'Debian')
+G_HEADER_1 = '# Steuerung Roboter-Auto mit T'
+G_HEADER_2 = 'astatureingaben              #'
+
+# ----------------------------------------------------------------------------
+# Globale Konstanten GC_<name> für alle Funktionen und Theads
+GC_log_ein = True               # Schalter für Logging Ein=True / Aus=False
+GC_log_detail = False           # Schalter Detail-Logging Ein=True/Aus=False
+GC_speed_min = -1.0             # Minimale Speed der Motoren (rückwärts)
+GC_speed_max = +1.0             # Maximale Speed der Motoren (vorwärts)
+GC_speed_zero = 0.0             # Geschwindigkeit für Motoren AUS
+GC_mod_man = 'manuell'          # Modus manuelles Fahren
+GC_mod_auto = 'autonom'         # Modus autonomes Fahren
+# Globale Variablen GV_<name> für alle Funktionen und Theads
+GV_th_list = list()             # Identifier für die gestarteten Threads
+GV_speedleft = 0.0              # Geschwindigkeit Linke Motoren
+GV_speedright = 0.0             # Geschwindigkeit Rechte Motoren
+GV_modus = GC_mod_man           # Aktueller Fahrmodus
+GV_entfernung = 0               # Aktuelle Entfernung zum Hindernis vorne
+GV_anz_funk = 'START'           # Anzeige der aktuellen Funktion der Motoren
+# ----------------------------------------------------------------------------
+
 
 # Testmode einschalten mit Aufrufparameter 'test'
 # Im Testmodus wird der Motortreiber L298NHBridgePCA9685 nicht geladen
@@ -58,6 +60,7 @@ if not testmode:
 else:
     pass
 
+
 def motoren_autonom(funktion):
     global GV_speedleft, GV_speedright
     if(funktion == "VOR"):
@@ -72,9 +75,9 @@ def motoren_autonom(funktion):
             pass
     if(funktion == "ZURUECK"):
         if GV_speedleft < GC_speed_min:
-           GV_speedleft = GC_speed_min
+            GV_speedleft = GC_speed_min
         if GV_speedright < GC_speed_min:
-           GV_speedright = GC_speed_min
+            GV_speedright = GC_speed_min
         if not testmode:
             HBridge.setMotorLeft(GV_speedleft)
             HBridge.setMotorRight(GV_speedright)
@@ -88,11 +91,11 @@ def motoren_autonom(funktion):
             HBridge.setMotorRight(GV_speedright)
         else:
             pass
-    if(funktion == "RECHTS"): 
+    if(funktion == "RECHTS"):
         if GV_speedright < GC_speed_min:
-           GV_speedright = GC_speed_min
+            GV_speedright = GC_speed_min
         if GV_speedleft > GC_speed_max:
-           GV_speedleft = GC_speed_max
+            GV_speedleft = GC_speed_max
         if not testmode:
             HBridge.setMotorLeft(GV_speedleft)
             HBridge.setMotorRight(GV_speedright)
@@ -100,9 +103,9 @@ def motoren_autonom(funktion):
             pass
     if(funktion == "LINKS"):
         if GV_speedleft < GC_speed_min:
-           GV_speedleft = GC_speed_min
+            GV_speedleft = GC_speed_min
         if GV_speedright > GC_speed_max:
-           GV_speedright = GC_speed_max
+            GV_speedright = GC_speed_max
         if not testmode:
             HBridge.setMotorLeft(GV_speedleft)
             HBridge.setMotorRight(GV_speedright)
@@ -121,14 +124,15 @@ def motoren_autonom(funktion):
         else:
             pass
 
+
 def motoren_manuell(funktion):
     global GV_speedleft, GV_speedright
     speed_incr = 0.1
-    # Das Roboter-Auto faehrt vorwaerts, wenn der Anwender die 
+    # Das Roboter-Auto faehrt vorwaerts, wenn der Anwender die
     # Tastenkombination für "VOR" drückt.
     if(funktion == "VOR"):
-        # Das Roboter-Auto beschleunigt in Schritten von 10 % 
-        # bei jedem Tastendruck für "VOR" bis maximal 
+        # Das Roboter-Auto beschleunigt in Schritten von 10 %
+        # bei jedem Tastendruck für "VOR" bis maximal
         # 100 %. Dann faehrt es maximal schnell vorwaerts.
         GV_speedleft = round((GV_speedleft + speed_incr), 1)
         GV_speedright = round((GV_speedright + speed_incr), 1)
@@ -136,8 +140,8 @@ def motoren_manuell(funktion):
             GV_speedleft = GC_speed_max
         if GV_speedright > GC_speed_max:
             GV_speedright = GC_speed_max
-        # Dem Programm L298NHBridge, das zu Beginn  
-        # importiert wurde, wird die Geschwindigkeit fuer 
+        # Dem Programm L298NHBridge, das zu Beginn
+        # importiert wurde, wird die Geschwindigkeit fuer
         # die linken und rechten Motoren uebergeben.
         if not testmode:
             HBridge.setMotorLeft(GV_speedleft)
@@ -147,17 +151,17 @@ def motoren_manuell(funktion):
     # Das Roboter-Auto faehrt rueckwaerts, wenn die Tastenkombination
     # für "ZURUECK" gedrueckt wird.
     if(funktion == "ZURUECK"):
-        # Das Roboter-Auto bremst in Schritten von 10 % 
-        # bei jedem Tastendruck für "ZURUECK" bis maximal 
+        # Das Roboter-Auto bremst in Schritten von 10 %
+        # bei jedem Tastendruck für "ZURUECK" bis maximal
         # -100 %. Dann faehrt es maximal schnell rueckwaerts.
         GV_speedleft = round((GV_speedleft - speed_incr), 1)
         GV_speedright = round((GV_speedright - speed_incr), 1)
         if GV_speedleft < GC_speed_min:
-           GV_speedleft = GC_speed_min
+            GV_speedleft = GC_speed_min
         if GV_speedright < GC_speed_min:
-           GV_speedright = GC_speed_min
-        # Dem Programm L298NHBridge, das zu Beginn  
-        # importiert wurde, wird die Geschwindigkeit fuer 
+            GV_speedright = GC_speed_min
+        # Dem Programm L298NHBridge, das zu Beginn
+        # importiert wurde, wird die Geschwindigkeit fuer
         # die linken und rechten Motoren uebergeben.
         if not testmode:
             HBridge.setMotorLeft(GV_speedleft)
@@ -177,13 +181,13 @@ def motoren_manuell(funktion):
     # Mit der Tastenkombination für "RECHTS" lenkt das Auto nach rechts,
     # bis die max/min. Geschwindigkeit der linken und
     # rechten Motoren erreicht ist.
-    if(funktion == "RECHTS"): 
+    if(funktion == "RECHTS"):
         GV_speedright = round((GV_speedright - speed_incr), 1)
         GV_speedleft = round((GV_speedleft + speed_incr), 1)
         if GV_speedright < GC_speed_min:
-           GV_speedright = GC_speed_min
+            GV_speedright = GC_speed_min
         if GV_speedleft > GC_speed_max:
-           GV_speedleft = GC_speed_max
+            GV_speedleft = GC_speed_max
         if not testmode:
             HBridge.setMotorLeft(GV_speedleft)
             HBridge.setMotorRight(GV_speedright)
@@ -196,16 +200,16 @@ def motoren_manuell(funktion):
         GV_speedleft = round((GV_speedleft - speed_incr), 1)
         GV_speedright = round((GV_speedright + speed_incr), 1)
         if GV_speedleft < GC_speed_min:
-           GV_speedleft = GC_speed_min
+            GV_speedleft = GC_speed_min
         if GV_speedright > GC_speed_max:
-           GV_speedright = GC_speed_max
+            GV_speedright = GC_speed_max
         if not testmode:
             HBridge.setMotorLeft(GV_speedleft)
             HBridge.setMotorRight(GV_speedright)
         else:
             pass
-    # Mit der Tastenkombination "ENDE" wird die Endlosschleife beendet 
-    # und das Programm ebenfalls beendet. Zum Schluss wird 
+    # Mit der Tastenkombination "ENDE" wird die Endlosschleife beendet
+    # und das Programm ebenfalls beendet. Zum Schluss wird
     # noch die Funktion exit() aufgerufen, die die Motoren stoppt.
     if(funktion == "ENDE"):
         func = sys._getframe().f_code.co_name
@@ -221,8 +225,10 @@ def motoren_manuell(funktion):
             pass
 
 # Check, ob die Treads noch laufen
+
+
 def live_check():
-    alive = [[0,0],[0,0],[0,0]]
+    alive = [[0, 0], [0, 0], [0, 0]]
     thread_up = 'running'
     thread_down = 'stopped'
     for index, thread in enumerate(GV_th_list):
@@ -236,6 +242,8 @@ def live_check():
     return alive
 
 # Ermittlung Steuerungsbefehl aus Tastendruck
+
+
 def steuerbefehl(key):
     if (key == "m"):
         befehl = "MODUS"
@@ -256,33 +264,38 @@ def steuerbefehl(key):
     return befehl
 
 # Ausgabe Startbildschirm
+
+
 def printstart(warten):
     show_header(G_HEADER_1, G_HEADER_2, __file__, G_OS)
     print("*", 58*"=", "*", sep="")
-    print("*  ", c.lightcyan, "Robotersteuerung per Tastatur", \
+    print("*  ", c.lightcyan, "Robotersteuerung per Tastatur",
           27*" ", c.reset, "*", sep="")
     print("*", 58*" ", "*", sep="")
-    print("*  \'m\'                       : " \
+    print("*  \'m\'                       : "
           "Manuell / Autonom Fahren    *\r")
-    print("*  \'w\' / \'Pfeiltaste OBEN\'   : " \
+    print("*  \'w\' / \'Pfeiltaste OBEN\'   : "
           "vorwärts (beschleunigen)    *\r")
-    print("*  \'s\' / \'Pfeiltaste UNTEN\'  : " \
+    print("*  \'s\' / \'Pfeiltaste UNTEN\'  : "
           "rückwärts (beschleunigen)   *\r")
-    print("*  \'a\' / \'Pfeiltaste LINKS\'  : " \
+    print("*  \'a\' / \'Pfeiltaste LINKS\'  : "
           "nach links lenken           *\r")
-    print("*  \'d\' / \'Pfeiltaste RECHTS\' : " \
+    print("*  \'d\' / \'Pfeiltaste RECHTS\' : "
           "nach rechts lenken          *\r")
-    print("*  \'q\' / \'Leer-Taste\'        : " \
+    print("*  \'q\' / \'Leer-Taste\'        : "
           "Motoren stoppen             *\r")
-    print("*  \'x\' / \'Ctrl-C\'            : " \
+    print("*  \'x\' / \'Ctrl-C\'            : "
           "Steuerung beenden           *\r")
     print("*", 58*" ", "*", sep="")
     print("*", 58*"=", "*", sep="")
     sleep(warten)
 
 # Thread-Funktion Bildschirmanzeige
+
+
 def anzeige(ev):
-    func = sys._getframe().f_code.co_name ; id = threading.get_ident()
+    func = sys._getframe().f_code.co_name
+    id = threading.get_ident()
     txt = f"Thread started {id:10d}"
     logging.info(f"{func:>15s} : {txt:s}")
     lk = threading.Lock()
@@ -292,8 +305,8 @@ def anzeige(ev):
         clean_console()
         lk.acquire()
         print("\n*", 58*"=", "*\r", sep="")
-        print("*             ", c.lightcyan, \
-              f"System-Informationen ({aktuelle_uhrzeit():8s})", \
+        print("*             ", c.lightcyan,
+              f"System-Informationen ({aktuelle_uhrzeit():8s})",
               c.reset, "              *\r", sep="")
         print("*", 58*" ", "*\r", sep="")
         for thread in th_alive:
@@ -301,38 +314,38 @@ def anzeige(ev):
                 f1 = c.lightgreen
             else:
                 f1 = c.lightred
-            print(f"*  {thread[0]:25s} : {f1}{thread[1]:8s}", \
+            print(f"*  {thread[0]:25s} : {f1}{thread[1]:8s}",
                   c.reset, "                    *\r", sep="")
         print("*", 58*" ", "*\r", sep="")
         print("*", 58*"=", "*\r", sep="")
-        print("*                   ", c.lightcyan, \
-              "Entfernungsmessung", c.reset, \
+        print("*                   ", c.lightcyan,
+              "Entfernungsmessung", c.reset,
               "                     *\r", sep="")
         print("*", 58*" ", "*\r", sep="")
-        print("*           ", c.yellow, \
-              f"Hindernis vorne : {GV_entfernung:5d} cm", c.reset, \
+        print("*           ", c.yellow,
+              f"Hindernis vorne : {GV_entfernung:5d} cm", c.reset,
               "                     *\r", sep="")
         print("*", 58*" ", "*\r", sep="")
         print("*", 58*"=", "*\r", sep="")
-        print("*           ", c.lightcyan, \
-              "Geschwindigkeitsanzeige der Motoren", \
+        print("*           ", c.lightcyan,
+              "Geschwindigkeitsanzeige der Motoren",
               c.reset, "            *\r", sep="")
         print("*", 58*" ", "*\r", sep="")
         if GV_modus == GC_mod_auto:
             f1 = c.pink
         else:
             f1 = c.yellow
-        print("*                  ", c.yellow, \
-              "Fahrmodus : ", f1, \
-              f"{GV_modus:8s}", c.reset, \
+        print("*                  ", c.yellow,
+              "Fahrmodus : ", f1,
+              f"{GV_modus:8s}", c.reset,
               "                    *\r", sep="")
-        print("*           ", c.yellow, \
-              f"Steuerungsbefehl : {GV_anz_funk:>7s}", c.reset, \
+        print("*           ", c.yellow,
+              f"Steuerungsbefehl : {GV_anz_funk:>7s}", c.reset,
               "                     *\r", sep="")
         print("*", 58*" ", "*\r", sep="")
-        print("*  linker Motor --> ", c.yellow, \
-              f"{int(GV_speedleft*100):4d} %", c.reset, "   |", \
-              c.yellow, f" {int(GV_speedright*100):4d} %", c.reset, \
+        print("*  linker Motor --> ", c.yellow,
+              f"{int(GV_speedleft*100):4d} %", c.reset, "   |",
+              c.yellow, f" {int(GV_speedright*100):4d} %", c.reset,
               "  <-- rechter Motor   *\r", sep="")
         print("*", 58*"=", "*\r", sep="")
         lk.release()
@@ -341,8 +354,11 @@ def anzeige(ev):
     logging.info(f"{func:>15s} : {txt:s}")
 
 # Thread-Funktion Taste einlesen und Steuerbefehl in Queue schreiben
+
+
 def taste(ev, ev_stop, qu):
-    func = sys._getframe().f_code.co_name ; id = threading.get_ident()
+    func = sys._getframe().f_code.co_name
+    id = threading.get_ident()
     txt = f"Thread started {id:10d}"
     logging.info(f"{func:>15s} : {txt:s}")
     global GV_modus
@@ -355,7 +371,7 @@ def taste(ev, ev_stop, qu):
             if GV_modus == GC_mod_man:
                 GV_modus = GC_mod_auto
             else:
-                GV_modus = GC_mod_man 
+                GV_modus = GC_mod_man
         if befehl != "" and befehl != "MODUS" and \
            befehl != "ENDE" and not ev_stop.is_set():
             qu.put(befehl)
@@ -367,8 +383,11 @@ def taste(ev, ev_stop, qu):
     logging.info(f"{func:>15s} : {txt:s}")
 
 # Thread Entfernungsmessung vorne
+
+
 def distance(ev):
-    func = sys._getframe().f_code.co_name ; id = threading.get_ident()
+    func = sys._getframe().f_code.co_name
+    id = threading.get_ident()
     txt = f"Thread started {id:10d}"
     logging.info(f"{func:>15s} : {txt:s}")
     global GV_entfernung
@@ -380,12 +399,14 @@ def distance(ev):
     logging.info(f"{func:>15s} : {txt:s}")
 
 # Autonomes Fahren
+
+
 def autonom_fahren(ev_stop, qu):
     global GV_speedleft, GV_speedright
     global GV_anz_funk
-    warn_dist_low    = 50
+    warn_dist_low = 50
     warn_dist_medium = 30
-    warn_dist_high   = 10
+    warn_dist_high = 10
     func = sys._getframe().f_code.co_name
     txt = f"Autonomes Fahren started"
     logging.info(f"{func:>15s} : {txt:s}")
@@ -401,21 +422,24 @@ def autonom_fahren(ev_stop, qu):
             GV_speedright = round(fast, 1)
             txt = f"Entf. {dist:3d}cm , Speed {int(GV_speedleft*100):3d}% , " \
                   f"{GV_anz_funk:6s} , Vollgas"
-            if GC_log_detail : logging.info(f"{func:>15s} : {txt:s}")
+            if GC_log_detail:
+                logging.info(f"{func:>15s} : {txt:s}")
             motoren_autonom(funktion)
         elif dist >= warn_dist_medium:
             GV_speedleft = round(medium, 1)
             GV_speedright = round(medium, 1)
             txt = f"Entf. {dist:3d}cm , Speed {int(GV_speedleft*100):3d}% , " \
                   f"{GV_anz_funk:6s} , gedrosselt"
-            if GC_log_detail : logging.info(f"{func:>15s} : {txt:s}")
+            if GC_log_detail:
+                logging.info(f"{func:>15s} : {txt:s}")
             motoren_autonom(funktion)
         elif dist >= warn_dist_high:
             GV_speedleft = round(slow, 1)
             GV_speedright = round(slow, 1)
             txt = f"Entf. {dist:3d}cm , Speed {int(GV_speedleft*100):3d}% , " \
                   f"{GV_anz_funk:6s} , stark gedrosselt"
-            if GC_log_detail : logging.info(f"{func:>15s} : {txt:s}")
+            if GC_log_detail:
+                logging.info(f"{func:>15s} : {txt:s}")
             motoren_autonom(funktion)
         else:
             # erst mal anhalten und kurz warten
@@ -424,10 +448,12 @@ def autonom_fahren(ev_stop, qu):
             funktion = GV_anz_funk = "STOP"
             txt = f"Entf. {dist:3d}cm , Speed {int(GV_speedleft*100):3d}% , " \
                   f"{GV_anz_funk:6s} , angehalten"
-            if GC_log_detail : logging.info(f"{func:>15s} : {txt:s}")
+            if GC_log_detail:
+                logging.info(f"{func:>15s} : {txt:s}")
             motoren_autonom(funktion)
             sleep(0.5)
-            # Drehe auf der Stelle in Abhängigkeit der Zufallszahl (0 = links , 1 = rechts)
+            # Drehe auf der Stelle in Abhängigkeit der
+            # Zufallszahl (0 = links , 1 = rechts)
             drehrichtung = randint(0, 1)
             if drehrichtung == 0:
                 GV_speedleft = round(-slow, 1)
@@ -435,14 +461,16 @@ def autonom_fahren(ev_stop, qu):
                 funktion = GV_anz_funk = "LINKS"
                 txt = f"Drehung       Speed {int(abs(GV_speedleft)*100):3d}% , " \
                       f"{GV_anz_funk:6s}"
-                if GC_log_detail : logging.info(f"{func:>15s} : {txt:s}")
+                if GC_log_detail:
+                    logging.info(f"{func:>15s} : {txt:s}")
             else:
                 GV_speedleft = round(slow, 1)
                 GV_speedright = round(-slow, 1)
                 funktion = GV_anz_funk = "RECHTS"
                 txt = f"Drehung       Speed {int(abs(GV_speedleft)*100):3d}% , " \
                       f"{GV_anz_funk:6s}"
-                if GC_log_detail : logging.info(f"{func:>15s} : {txt:s}")
+                if GC_log_detail:
+                    logging.info(f"{func:>15s} : {txt:s}")
             motoren_autonom(funktion)
             sleep(2.0)
             # Stoppe Drehung
@@ -451,11 +479,12 @@ def autonom_fahren(ev_stop, qu):
             funktion = GV_anz_funk = "STOP"
             txt = f"Drehung       Speed {int(GV_speedleft*100):3d}% , " \
                   f"{GV_anz_funk:6s}"
-            if GC_log_detail : logging.info(f"{func:>15s} : {txt:s}")
+            if GC_log_detail:
+                logging.info(f"{func:>15s} : {txt:s}")
             motoren_autonom(funktion)
             sleep(0.5)
         sleep(0.2)
-    funktion = GV_anz_funk = "STOP"    
+    funktion = GV_anz_funk = "STOP"
     motoren_autonom(funktion)
     # Queue komplett leeren nach autonomen Fahren
     while not qu.empty():
@@ -464,22 +493,26 @@ def autonom_fahren(ev_stop, qu):
     logging.info(f"{func:>15s} : {txt:s}")
 
 # Manuelles Fahren
+
+
 def manuell_fahren(ev_stop, qu):
     global GV_anz_funk
     func = sys._getframe().f_code.co_name
     txt = f"Manuelles Fahren started"
     logging.info(f"{func:>15s} : {txt:s}")
-    while not ev_stop.is_set()and GV_modus == GC_mod_man:
+    while not ev_stop.is_set() and GV_modus == GC_mod_man:
         if not qu.empty():
             funktion = GV_anz_funk = qu.get()
             motoren_manuell(funktion)
         sleep(0.2)
-    funktion = GV_anz_funk = "STOP"    
+    funktion = GV_anz_funk = "STOP"
     motoren_manuell(funktion)
     txt = f"Manuelles Fahren stopped"
     logging.info(f"{func:>15s} : {txt:s}")
 
 # Zentralschleife
+
+
 def loop_main(ev_stop, qu):
     func = sys._getframe().f_code.co_name
     txt = f"Zentralschleife started"
@@ -509,33 +542,25 @@ def loop_main(ev_stop, qu):
     sleep(0.1)
     txt = f"Zentralschleife stopped"
     logging.info(f"{func:>15s} : {txt:s}")
-    
+
 # Hauptprogramm
+
+
 def _main():
-#    cmd = "lsb_release -d"
-#    x = subprocess.run(cmd, shell=True, \
-#                             capture_output=True, text=True)
-#    if x.returncode == 0:
-#        ver_distribution = x.stdout.replace("Description:","").replace("\n","").strip()
-#        if 'Raspbian' in ver_distribution:
-#            pass
-#        else:
-#            print(c.lightred, "\n!!! Programm ist nur auf Raspberry PIs mit Raspian lauffähig !!!\n", c.reset)
-#            exit(1)
-#    else:
-#        print(c.lightred, "\n!!! Programm ist nur auf Raspberry PIs mit Raspian lauffähig !!!\n", c.reset)
-#        exit(1)
     format = "%(asctime)s: %(levelname)s - %(message)s"
     log = os.path.basename(__file__).replace(".py", ".log")
     log_file = homedir = os.path.expanduser('~')+'/Python/logs/'+log
     if platform.system() == 'Windows':
         log_file = str(Path(os.getcwd()).parent)+'\\logs\\'+log
-    logging.basicConfig(format=format, level=logging.WARNING, datefmt="%d-%m-%Y %H:%M:%S", \
-            filename=log_file, filemode='a')
-    if GC_log_ein : logging.getLogger().setLevel(logging.DEBUG)    
+    logging.basicConfig(format=format, level=logging.WARNING,
+                        datefmt="%d-%m-%Y %H:%M:%S", filename=log_file,
+                        filemode='a')
+    if GC_log_ein:
+        logging.getLogger().setLevel(logging.DEBUG)
     logging.info(50*">")
     try:
-        func = sys._getframe().f_code.co_name ; id = threading.get_ident()
+        func = sys._getframe().f_code.co_name
+        id = threading.get_ident()
         txt = f"Thread started {id:10d}"
         logging.info(f"{func:>15s} : {txt:s}")
         ev0 = threading.Event()         # Bildschirmanzeige
@@ -547,13 +572,13 @@ def _main():
         ev_stop = threading.Event()
         ev_stop.clear()
         qu = queue.Queue()
-        t = threading.Thread(target=anzeige, args=(ev0,), \
+        t = threading.Thread(target=anzeige, args=(ev0,),
                              name="Thread Bildschirmanzeige")
         GV_th_list.append(t)
-        t = threading.Thread(target=distance, args=(ev1,), \
+        t = threading.Thread(target=distance, args=(ev1,),
                              name="Thread Entfernungsmessung")
         GV_th_list.append(t)
-        t = threading.Thread(target=taste, args=(ev2, ev_stop, qu,), \
+        t = threading.Thread(target=taste, args=(ev2, ev_stop, qu,),
                              name="Thread Tastaturbetätigung")
         GV_th_list.append(t)
         printstart(0.5)
@@ -570,7 +595,8 @@ def _main():
         for thread in GV_th_list:
             thread.join()
         print("\nEnde Robotersteuerung\r\n")
-        func = sys._getframe().f_code.co_name ; id = threading.get_ident()
+        func = sys._getframe().f_code.co_name
+        id = threading.get_ident()
         txt = f"Thread stopped {id:10d}"
         logging.info(f"{func:>15s} : {txt:s}")
     except (KeyboardInterrupt):
@@ -590,5 +616,6 @@ def _main():
         txt = f"Exception occurred {id:10d}"
         logging.error(f"{func:>15s} : {txt:s}", exc_info=True)
 
+
 if __name__ == "__main__":
-    _main() 
+    _main()
