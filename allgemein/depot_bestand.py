@@ -6,17 +6,18 @@
 # Autor        : Kanopus1958
 # Beschreibung : Ermittlung Depotbestand und Versand per Mail
 
-G_OS = ('Windows') 
+import rwm_credentials01 as cred
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import arrow
+import pandas_datareader.data as web
+from rwm_mod01 import show_header
+
+G_OS = ('Windows')
 G_HEADER_1 = '# Depot-Bestand ermitteln und '
 G_HEADER_2 = 'per Mail versenden           #'
 
-from rwm_mod01 import show_header
-import pandas_datareader.data as web
-import arrow
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-import smtplib
-import rwm_credentials01 as cred
 
 def _main():
     show_header(G_HEADER_1, G_HEADER_2, __file__, G_OS)
@@ -30,7 +31,8 @@ def _main():
     end_datum = arrow.now().shift(days=-1).date()
 
     yahoo_ergebnis = web.DataReader(
-        list(bestand.keys()), "yahoo", start_datum, end_datum)["Adj Close"].iloc[-1]
+        list(bestand.keys()), "yahoo",
+        start_datum, end_datum)["Adj Close"].iloc[-1]
     # print (yahoo_ergebnis)
     # exit(0)
 
@@ -38,8 +40,10 @@ def _main():
     gesamt_summe = 0
     for symbol, details in bestand.items():
         anz = details["Anz"]
-        gesamt_summe += (summe:= yahoo_ergebnis[symbol] * anz)
-        nachricht += f'{details["Bez"] + " ("+symbol+") ":<40} {yahoo_ergebnis[symbol]:>8.2f} x {anz:>5} = Summe {summe:>10,.2f}\n'
+        gesamt_summe += (summe := yahoo_ergebnis[symbol] * anz)
+        nachricht += f'{details["Bez"] + " ("+symbol+") ":<40} \
+            {yahoo_ergebnis[symbol]:>8.2f} x {anz:>5} = Summe \
+            {summe:>10,.2f}\n'
     nachricht += f'{gesamt_summe:>76,.2f}\n'
 
     msg = MIMEMultipart()
@@ -56,6 +60,7 @@ def _main():
         print(nachricht)
     else:
         print(f'Probleme beim Versand ({error_text})')
+
 
 if __name__ == "__main__":
     _main()

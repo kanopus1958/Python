@@ -5,7 +5,9 @@
 # SW-Stand     : 17.02.2022
 # Autor        : Kanopus1958
 # Beschreibung : Turm Hanoi Beispiel in Python
+
 from rwm_mod01 import show_header
+
 G_OS = ('Raspbian', 'Debian', 'Windows')
 G_HEADER_1 = '# Turm Hanoi (Python-Beispiel)'
 G_HEADER_2 = '                             #'

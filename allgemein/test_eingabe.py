@@ -5,14 +5,16 @@
 # SW-Stand     : 17.02.2022
 # Autor        : Kanopus1958
 # Beschreibung : Test von Eingabe- und Tastenüberwachung
-G_OS = ('Raspbian','Debian','Windows') 
+
+from time import sleep
+from rwm_mod01 import show_header, getch
+from rwm_steuerung import color as c, key_stroke as k
+import platform
+
+G_OS = ('Raspbian', 'Debian', 'Windows')
 G_HEADER_1 = '# Test Eingabe-/Tasten-Funktio'
 G_HEADER_2 = 'nen   (Stop q/CTRL_C/CTRL_Z) #'
 
-import platform
-from rwm_steuerung import color as c, key_stroke as k
-from rwm_mod01 import show_header, getch
-from time import sleep
 
 def _main():
     try:
@@ -32,6 +34,7 @@ def _main():
         sleep(1.0)
         print(c.lightred, p.up)
         print(3*" ", "\n!!! Programm abgebrochen !!!\n", c.reset)
+
 
 if __name__ == "__main__":
     _main()

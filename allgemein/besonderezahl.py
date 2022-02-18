@@ -2,7 +2,7 @@
 
 # Programm     : besonderezahl.py
 # Version      : 1.01
-# SW-Stand     : 17.02.2022
+# SW-Stand     : 18.02.2022
 # Autor        : Kanopus1958
 # Beschreibung : Zahl mit Persistence 11 ist 277777788888899
 

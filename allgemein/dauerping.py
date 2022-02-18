@@ -40,17 +40,22 @@ def ping_thread():
                 break
             cmd = cmd_ping+" "+z
             x = subprocess.run(
-                cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                               cmd, shell=True, stdout=subprocess.DEVNULL,
+                               stderr=subprocess.DEVNULL)
             if x.returncode == 0:
                 sleep(0.1)
-                print("*", c.yellow, f"{aktuelle_uhrzeit():8s}   {z:20s} : Zielrechner ON",
+                print("*", c.yellow,
+                      f"{aktuelle_uhrzeit():8s}   {z:20s} : Zielrechner ON",
                       c.reset, 5*" ", "*\r")
             elif x.returncode == 1:
-                print("*", c.lightcyan, f"{aktuelle_uhrzeit():8s}   {z:20s} : Zielrechner OFF",
+                print("*", c.lightcyan,
+                      f"{aktuelle_uhrzeit():8s}   {z:20s} : Zielrechner OFF",
                       c.reset, 4*" ", "*\r")
             else:
                 sleep(3.0)
-                print("*", c.lightred, f"{aktuelle_uhrzeit():8s}   {z:20s} : Zielrechner UNKNOWN",
+                print("*", c.lightred,
+                      f"{aktuelle_uhrzeit():8s}   {z:20s} : "
+                      "Zielrechner UNKNOWN",
                       c.reset, 0*" ", "*\r")
             anz_z += 1
         if not stop or not anzeige_komplett:
@@ -63,7 +68,8 @@ def ping_thread():
             print((N_Druck+2)*p.up)
         anzeige_komplett = True
     print(c.reset)
-    print("Monitoring beendet  :", aktuelles_datum(), aktuelle_uhrzeit(), "\n")
+    print("Monitoring beendet  :",
+          aktuelles_datum(), aktuelle_uhrzeit(), "\n")
     return
 
 

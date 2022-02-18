@@ -1,6 +1,6 @@
 *******************************************************************************
 * rsync Parameter Datei    : synchronisation.input                            *
-* Version/Stand            : V01.04 17.02.2022                                *
+* Version/Stand            : V01.04 18.02.2022                                *
 * Beschreibung             : Synchronisation ausgewählter Unterverzeichnisse  *
 * Quelle                   : Raspberry Entwicklungsrechner (Merkur)           *
 * Ziel                     : Satelliten (Robot-01-03, Uranus,Neptun)          *

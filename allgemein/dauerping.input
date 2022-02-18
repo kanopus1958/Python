@@ -1,6 +1,6 @@
 *******************************************************************************
 * dauerping Parameter Datei: dauerping.input                                  *
-* Version/Stand            : V01.03 17.02.2022                                *
+* Version/Stand            : V01.03 18.02.2022                                *
 * Beschreibung             : Dauer ping an ausgewählte Rechner                *
 * Quelle                   : jeder Raspberry im Netzwerk Andromeda            *
 * Ziel                     : unten aufgefuehrte Hosts im Netzwerk Andromeda   *

@@ -5,7 +5,15 @@
 # SW-Stand     : 17.02.2022
 # Autor        : Kanopus1958
 # Beschreibung : Test von psutil Funktionalitäten
-G_OS = ('Raspbian','Debian','Windows') 
+
+from time import sleep
+import psutil
+import threading
+from rwm_mod01 import show_header, aktuelle_uhrzeit, aktuelles_datum, getch
+from rwm_steuerung import color as c, position as p, key_stroke as k
+import platform
+
+G_OS = ('Raspbian', 'Debian', 'Windows')
 G_HEADER_1 = '# Test psutil Funktionen      '
 G_HEADER_2 = '      (Stop q/CTRL_C/CTRL_Z) #'
 
@@ -14,17 +22,11 @@ G_HEADER_2 = '      (Stop q/CTRL_C/CTRL_Z) #'
 GC_messzyklus = 1.0
 # ----------------------------------------------------------------------------
 
-import platform
-from rwm_steuerung import color as c, position as p, key_stroke as k
-from rwm_mod01 import show_header, aktuelle_uhrzeit, aktuelles_datum, getch
-import threading
-import psutil
-from time import sleep
 
 def anzeige_thread():
-    N_Druck = 12 # Maximale Anzahl von druckbaren Ausgabezeilen
+    N_Druck = 12  # Maximale Anzahl von druckbaren Ausgabezeilen
     sleep(0.1)
-    print("Messung gestartet  : ", aktuelles_datum(), \
+    print("Messung gestartet  : ", aktuelles_datum(),
           " ", aktuelle_uhrzeit(), sep="", end="\n\r")
     zyklus = 0
     anzeige_komplett = False
@@ -50,35 +52,35 @@ def anzeige_thread():
                         tgpu = entry.current
         print(60*"*", "\r")
         print(c.yellow, end="")
-        print(f"* Messzeit         : {aktuelle_uhrzeit():8s}", \
+        print(f"* Messzeit         : {aktuelle_uhrzeit():8s}",
               28*" ", "*\r")
-        print(f"* Testzyklus       : {zyklus:8d}", \
+        print(f"* Testzyklus       : {zyklus:8d}",
               28*" ", "*\r")
-        print(f"* CPU Anzahl       : {cpu_count:8d} Stk", \
+        print(f"* CPU Anzahl       : {cpu_count:8d} Stk",
               24*" ", "*\r")
-        print(f"* CPU Last         : {cpu_load:8.1f} %", \
+        print(f"* CPU Last         : {cpu_load:8.1f} %",
               26*" ", "*\r")
         if tcpu_exist:
-            print(f"* CPU Temperatur   : {tcpu:8.1f} 'C", \
+            print(f"* CPU Temperatur   : {tcpu:8.1f} 'C",
                   25*" ", "*\r")
         else:
             anz_z -= 1
         if tgpu_exist:
-            print(f"* GPU Temperatur   : {tgpu:8.1f} 'C", \
+            print(f"* GPU Temperatur   : {tgpu:8.1f} 'C",
                   25*" ", "*\r")
         else:
             anz_z -= 1
-        print(f"* Taktrate aktuell : {freq.current:8.1f} MHz", \
+        print(f"* Taktrate aktuell : {freq.current:8.1f} MHz",
               24*" ", "*\r")
-        print(f"* Taktrate min.    : {freq.min:8.1f} MHz", \
+        print(f"* Taktrate min.    : {freq.min:8.1f} MHz",
               24*" ", "*\r")
-        print(f"* Taktrate max.    : {freq.max:8.1f} MHz", \
+        print(f"* Taktrate max.    : {freq.max:8.1f} MHz",
               24*" ", "*\r")
-        print(f"* RAM Auslastung   : {mem.percent:8.1f} %", \
+        print(f"* RAM Auslastung   : {mem.percent:8.1f} %",
               26*" ", "*\r")
-        print(f"* RAM Belegung     : {mem.used/1024/1024:8.1f} MB", \
+        print(f"* RAM Belegung     : {mem.used/1024/1024:8.1f} MB",
               25*" ", "*\r")
-        print(f"* RAM total        : {mem.total/1024/1024:8.1f} MB", \
+        print(f"* RAM total        : {mem.total/1024/1024:8.1f} MB",
               25*" ", "*\r")
         print(c.reset, end="")
         print(60*"*", "\r")
@@ -86,11 +88,12 @@ def anzeige_thread():
         sleep(0.1)
         anzeige_komplett = True
     print((anz_z+2)*p.down, end="")
-    print("Messung beendet    : ", aktuelles_datum(), \
+    print("Messung beendet    : ", aktuelles_datum(),
           " ", aktuelle_uhrzeit(), sep="", end="\n\r")
     print()
     return
-    
+
+
 def _main():
     global stop
     try:
@@ -112,6 +115,7 @@ def _main():
         stop = True
         print(c.lightred, p.up)
         print(3*" ", "\n!!! Programm abgebrochen !!!\n", c.reset)
+
 
 if __name__ == "__main__":
     _main()

@@ -2,7 +2,7 @@
 
 # Programm     : pythagoras.py
 # Version      : 1.01
-# SW-Stand     : 17.02.2022
+# SW-Stand     : 18.02.2022
 # Autor        : Kanopus1958
 # Beschreibung : Berechnung von Tripeln die a^2 + b^2 = c^2 erfüllen
 
