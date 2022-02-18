@@ -95,3 +95,32 @@
 15-02-2022 15:41:32: INFO - Thread gestoppt : tasten_thread 14800
 15-02-2022 15:41:33: INFO - Berechnung beendet : _main
 15-02-2022 15:41:33: INFO - Thread gestoppt : _main 14736
+18-02-2022 15:15:38: INFO - Thread gestartet : _main           10760
+18-02-2022 15:15:39: INFO - Thread gestartet : tasten_thread               14364
+18-02-2022 15:15:39: INFO - Berechnung gestartet : _main
+18-02-2022 15:15:40: INFO - Zwischenergebnis: [0, 1, '00:00:00', '15:15:39']
+18-02-2022 15:15:40: INFO - Zwischenergebnis: [1, 10, '00:00:00', '15:15:39']
+18-02-2022 15:15:41: INFO - Zwischenergebnis: [2, 25, '00:00:00', '15:15:39']
+18-02-2022 15:15:42: INFO - Zwischenergebnis: [3, 39, '00:00:00', '15:15:39']
+18-02-2022 15:15:42: INFO - Zwischenergebnis: [4, 77, '00:00:00', '15:15:39']
+18-02-2022 15:15:43: INFO - Zwischenergebnis: [5, 679, '00:00:00', '15:15:39']
+18-02-2022 15:15:43: INFO - Zwischenergebnis: [6, 6788, '00:00:00', '15:15:39']
+18-02-2022 15:15:44: INFO - Zwischenergebnis: [7, 68889, '00:00:00', '15:15:39']
+18-02-2022 15:15:58: INFO - Zwischenergebnis: [8, 2677889, '00:00:07', '15:15:47']
+18-02-2022 15:17:01: INFO - Thread gestoppt : tasten_thread               14364
+18-02-2022 15:17:01: INFO - Berechnung beendet : _main
+18-02-2022 15:17:01: INFO - Thread gestoppt : _main               10760
+18-02-2022 15:17:11: INFO - Thread gestartet : _main           5412
+18-02-2022 15:17:12: INFO - Thread gestartet : tasten_thread               15164
+18-02-2022 15:17:13: INFO - Berechnung gestartet : _main
+18-02-2022 15:17:13: INFO - Zwischenergebnis: [0, 1, '00:00:00', '15:17:13']
+18-02-2022 15:17:14: INFO - Zwischenergebnis: [1, 10, '00:00:00', '15:17:13']
+18-02-2022 15:17:14: INFO - Zwischenergebnis: [2, 25, '00:00:00', '15:17:13']
+18-02-2022 15:17:15: INFO - Zwischenergebnis: [3, 39, '00:00:00', '15:17:13']
+18-02-2022 15:17:16: INFO - Zwischenergebnis: [4, 77, '00:00:00', '15:17:13']
+18-02-2022 15:17:16: INFO - Zwischenergebnis: [5, 679, '00:00:00', '15:17:13']
+18-02-2022 15:17:17: INFO - Zwischenergebnis: [6, 6788, '00:00:00', '15:17:13']
+18-02-2022 15:17:17: INFO - Zwischenergebnis: [7, 68889, '00:00:00', '15:17:13']
+18-02-2022 15:17:29: INFO - Thread gestoppt : tasten_thread               15164
+18-02-2022 15:17:29: INFO - Berechnung beendet : _main
+18-02-2022 15:17:29: INFO - Thread gestoppt : _main               5412
