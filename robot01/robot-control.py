@@ -2,7 +2,7 @@
 
 # Programm     : robot-control.py
 # Version      : 1.00
-# SW-Stand     : 17.02.2022
+# SW-Stand     : 18.02.2022
 # Autor        : Kanopus1958
 # Beschreibung : Steuerung eines Roboter-Autos mit Tastatureingaben
 
@@ -27,7 +27,7 @@ G_HEADER_2 = 'astatureingaben              #'
 # ----------------------------------------------------------------------------
 # Globale Konstanten GC_<name> für alle Funktionen und Theads
 GC_log_ein = True               # Schalter für Logging Ein=True / Aus=False
-GC_log_detail = False           # Schalter Detail-Logging Ein=True/Aus=False
+GC_log_detail = True           # Schalter Detail-Logging Ein=True/Aus=False
 GC_speed_min = -1.0             # Minimale Speed der Motoren (rückwärts)
 GC_speed_max = +1.0             # Maximale Speed der Motoren (vorwärts)
 GC_speed_zero = 0.0             # Geschwindigkeit für Motoren AUS
@@ -459,7 +459,8 @@ def autonom_fahren(ev_stop, qu):
                 GV_speedleft = round(-slow, 1)
                 GV_speedright = round(slow, 1)
                 funktion = GV_anz_funk = "LINKS"
-                txt = f"Drehung    Speed {int(abs(GV_speedleft)*100):3d}% , " \
+                txt = f"Drehung       Speed " \
+                      f"{int(abs(GV_speedleft)*100):3d}% , " \
                       f"{GV_anz_funk:6s}"
                 if GC_log_detail:
                     logging.info(f"{func:>15s} : {txt:s}")
@@ -467,7 +468,8 @@ def autonom_fahren(ev_stop, qu):
                 GV_speedleft = round(slow, 1)
                 GV_speedright = round(-slow, 1)
                 funktion = GV_anz_funk = "RECHTS"
-                txt = f"Drehung    Speed {int(abs(GV_speedleft)*100):3d}% , " \
+                txt = f"Drehung       Speed " \
+                      f"{int(abs(GV_speedleft)*100):3d}% , " \
                       f"{GV_anz_funk:6s}"
                 if GC_log_detail:
                     logging.info(f"{func:>15s} : {txt:s}")
