@@ -9,29 +9,31 @@
 #                Cursor-Position, Farben und Tastencodes
 
 class position:
-    up         = '\r\033[A'
-    down       = '\r\033[B'
-    right      = '\033[C'
-    left       = '\033[D'
+    up = '\r\033[A'
+    down = '\r\033[B'
+    right = '\033[C'
+    left = '\033[D'
+
 
 class color:
-    reset      = '\033[0m'
-    black      = '\033[30m'
-    red        = '\033[31m'
-    green      = '\033[32m'
-    orange     = '\033[33m'
-    blue       = '\033[34m'
-    purple     = '\033[35m'
-    pink       = '\033[95m'
-    cyan       = '\033[36m'
-    white      = '\033[37m'
-    yellow     = '\033[93m'
-    lightgrey  = '\033[37m'
-    darkgrey   = '\033[90m'
-    lightred   = '\033[91m'
+    reset = '\033[0m'
+    black = '\033[30m'
+    red = '\033[31m'
+    green = '\033[32m'
+    orange = '\033[33m'
+    blue = '\033[34m'
+    purple = '\033[35m'
+    pink = '\033[95m'
+    cyan = '\033[36m'
+    white = '\033[37m'
+    yellow = '\033[93m'
+    lightgrey = '\033[37m'
+    darkgrey = '\033[90m'
+    lightred = '\033[91m'
     lightgreen = '\033[92m'
-    lightblue  = '\033[94m'
-    lightcyan  = '\033[96m'
+    lightblue = '\033[94m'
+    lightcyan = '\033[96m'
+
 
 class key_stroke:
     # common
@@ -79,4 +81,3 @@ class key_stroke:
     END = '\x1b\x5b\x46'
     INSERT = '\x1b\x5b\x32\x7e'
     SUPR = '\x1b\x5b\x33\x7e'
-    

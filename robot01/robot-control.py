@@ -459,7 +459,7 @@ def autonom_fahren(ev_stop, qu):
                 GV_speedleft = round(-slow, 1)
                 GV_speedright = round(slow, 1)
                 funktion = GV_anz_funk = "LINKS"
-                txt = f"Drehung       Speed {int(abs(GV_speedleft)*100):3d}% , " \
+                txt = f"Drehung    Speed {int(abs(GV_speedleft)*100):3d}% , " \
                       f"{GV_anz_funk:6s}"
                 if GC_log_detail:
                     logging.info(f"{func:>15s} : {txt:s}")
@@ -467,7 +467,7 @@ def autonom_fahren(ev_stop, qu):
                 GV_speedleft = round(slow, 1)
                 GV_speedright = round(-slow, 1)
                 funktion = GV_anz_funk = "RECHTS"
-                txt = f"Drehung       Speed {int(abs(GV_speedleft)*100):3d}% , " \
+                txt = f"Drehung    Speed {int(abs(GV_speedleft)*100):3d}% , " \
                       f"{GV_anz_funk:6s}"
                 if GC_log_detail:
                     logging.info(f"{func:>15s} : {txt:s}")
