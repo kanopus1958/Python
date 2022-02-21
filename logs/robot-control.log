@@ -1,2 +1,250 @@
 13-02-2022 16:56:56: INFO - >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 13-02-2022 16:56:56: INFO -           _main : Thread started      19416
+21-02-2022 15:46:49: INFO - >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+21-02-2022 15:46:49: INFO -           _main : Thread started      14072
+21-02-2022 15:47:02: INFO -         anzeige : Thread started      12360
+21-02-2022 15:47:03: INFO -        distance : Thread started      18768
+21-02-2022 15:47:04: INFO -           taste : Thread started      14288
+21-02-2022 15:47:05: INFO -       loop_main : Zentralschleife started
+21-02-2022 15:47:05: INFO -  manuell_fahren : Manuelles Fahren started
+21-02-2022 15:47:08: WARNING -           _main : Thread interrupted by CTRL-C      14072
+21-02-2022 15:47:08: ERROR -           _main : Exception occurred      14072
+Traceback (most recent call last):
+  File "o:\01_Daten\DatenLocal\Entwicklung\Python\robot01\robot-control.py", line 591, in _main
+    loop_main(ev_stop, qu)
+  File "o:\01_Daten\DatenLocal\Entwicklung\Python\robot01\robot-control.py", line 529, in loop_main
+    manuell_fahren(ev_stop, qu)
+  File "o:\01_Daten\DatenLocal\Entwicklung\Python\robot01\robot-control.py", line 509, in manuell_fahren
+    sleep(0.2)
+KeyboardInterrupt
+21-02-2022 15:47:28: INFO -           taste : Thread stopped      14288
+21-02-2022 15:47:34: INFO - >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+21-02-2022 15:47:34: INFO -           _main : Thread started      18412
+21-02-2022 15:47:37: INFO -         anzeige : Thread started       4884
+21-02-2022 15:47:38: INFO -        distance : Thread started      19928
+21-02-2022 15:47:39: INFO -           taste : Thread started      13704
+21-02-2022 15:47:40: INFO -       loop_main : Zentralschleife started
+21-02-2022 15:47:40: INFO -  manuell_fahren : Manuelles Fahren started
+21-02-2022 15:47:52: INFO -  manuell_fahren : Manuelles Fahren stopped
+21-02-2022 15:47:52: INFO -  autonom_fahren : Autonomes Fahren started
+21-02-2022 15:47:52: INFO -  autonom_fahren : Entf.   9cm , Speed   0% , STOP   , angehalten
+21-02-2022 15:47:53: INFO -  autonom_fahren : Drehung       Speed  10% , LINKS 
+21-02-2022 15:47:55: INFO -  autonom_fahren : Drehung       Speed   0% , STOP  
+21-02-2022 15:47:55: INFO -  autonom_fahren : Entf.   5cm , Speed   0% , STOP   , angehalten
+21-02-2022 15:47:56: INFO -  autonom_fahren : Drehung       Speed  10% , LINKS 
+21-02-2022 15:47:58: INFO -  autonom_fahren : Drehung       Speed   0% , STOP  
+21-02-2022 15:47:59: INFO -  autonom_fahren : Entf.  72cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:47:59: INFO -  autonom_fahren : Entf.  72cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:47:59: INFO -  autonom_fahren : Entf.  72cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:47:59: INFO -  autonom_fahren : Entf.  72cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:00: INFO -  autonom_fahren : Entf.  35cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:48:00: INFO -  autonom_fahren : Entf.  35cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:48:00: INFO -  autonom_fahren : Entf.  35cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:48:00: INFO -  autonom_fahren : Entf.  35cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:48:01: INFO -  autonom_fahren : Entf.  35cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:48:01: INFO -  autonom_fahren : Entf.  96cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:01: INFO -  autonom_fahren : Entf.  96cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:01: INFO -  autonom_fahren : Entf.  96cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:01: INFO -  autonom_fahren : Entf.  96cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:02: INFO -  autonom_fahren : Entf.  98cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:02: INFO -  autonom_fahren : Entf.  98cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:02: INFO -  autonom_fahren : Entf.  98cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:02: INFO -  autonom_fahren : Entf.  98cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:03: INFO -  autonom_fahren : Entf.  98cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:03: INFO -  autonom_fahren : Entf. 100cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:03: INFO -  autonom_fahren : Entf. 100cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:03: INFO -  autonom_fahren : Entf. 100cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:04: INFO -  autonom_fahren : Entf. 100cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:04: INFO -  autonom_fahren : Entf.  66cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:04: INFO -  autonom_fahren : Entf.  66cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:04: INFO -  autonom_fahren : Entf.  66cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:04: INFO -  autonom_fahren : Entf.  66cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:05: INFO -  autonom_fahren : Entf.  81cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:05: INFO -  autonom_fahren : Entf.  81cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:05: INFO -  autonom_fahren : Entf.  81cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:05: INFO -  autonom_fahren : Entf.  81cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:06: INFO -  autonom_fahren : Entf.  81cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:06: INFO -  autonom_fahren : Entf.   7cm , Speed   0% , STOP   , angehalten
+21-02-2022 15:48:06: INFO -  autonom_fahren : Drehung       Speed  10% , RECHTS
+21-02-2022 15:48:08: INFO -  autonom_fahren : Drehung       Speed   0% , STOP  
+21-02-2022 15:48:09: INFO -  autonom_fahren : Entf.  39cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:48:09: INFO -  autonom_fahren : Entf.  39cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:48:10: INFO -  autonom_fahren : Entf.  39cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:48:10: INFO -  autonom_fahren : Entf.  16cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:48:10: INFO -  autonom_fahren : Entf.  16cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:48:10: INFO -  autonom_fahren : Entf.  16cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:48:11: INFO -  autonom_fahren : Entf.  16cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:48:11: INFO -  autonom_fahren : Entf.  16cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:48:11: INFO -  autonom_fahren : Entf.  99cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:11: INFO -  autonom_fahren : Entf.  99cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:12: INFO -  autonom_fahren : Entf.  99cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:12: INFO -  autonom_fahren : Entf.  99cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:12: INFO -  autonom_fahren : Entf.  86cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:12: INFO -  autonom_fahren : Entf.  86cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:12: INFO -  autonom_fahren : Entf.  86cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:13: INFO -  autonom_fahren : Entf.  86cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:13: INFO -  autonom_fahren : Entf.  86cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:13: INFO -  autonom_fahren : Entf.  46cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:48:13: INFO -  autonom_fahren : Entf.  46cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:48:14: INFO -  autonom_fahren : Entf.  46cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:48:14: INFO -  autonom_fahren : Entf.  46cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:48:14: INFO -  autonom_fahren : Entf.  60cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:14: INFO -  autonom_fahren : Entf.  60cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:15: INFO -  autonom_fahren : Entf.  60cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:48:16: WARNING -           _main : Thread interrupted by CTRL-C      18412
+21-02-2022 15:48:16: ERROR -           _main : Exception occurred      18412
+Traceback (most recent call last):
+  File "o:\01_Daten\DatenLocal\Entwicklung\Python\robot01\robot-control.py", line 591, in _main
+    loop_main(ev_stop, qu)
+  File "o:\01_Daten\DatenLocal\Entwicklung\Python\robot01\robot-control.py", line 527, in loop_main
+    autonom_fahren(ev_stop, qu)
+  File "o:\01_Daten\DatenLocal\Entwicklung\Python\robot01\robot-control.py", line 488, in autonom_fahren
+    sleep(0.2)
+KeyboardInterrupt
+21-02-2022 15:49:12: INFO -           taste : Thread stopped      13704
+21-02-2022 15:50:33: INFO - >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+21-02-2022 15:50:33: INFO -           _main : Thread started      16376
+21-02-2022 15:50:38: INFO -         anzeige : Thread started      14740
+21-02-2022 15:50:39: INFO -        distance : Thread started      19484
+21-02-2022 15:50:40: INFO -           taste : Thread started      17008
+21-02-2022 15:50:41: INFO -       loop_main : Zentralschleife started
+21-02-2022 15:50:41: INFO -  manuell_fahren : Manuelles Fahren started
+21-02-2022 15:50:50: INFO -  manuell_fahren : Manuelles Fahren stopped
+21-02-2022 15:50:50: INFO -  autonom_fahren : Autonomes Fahren started
+21-02-2022 15:50:50: INFO -  autonom_fahren : Entf.  52cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:50: INFO -  autonom_fahren : Entf.  52cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:51: INFO -  autonom_fahren : Entf.  52cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:51: INFO -  autonom_fahren : Entf.  52cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:51: INFO -  autonom_fahren : Entf.  79cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:51: INFO -  autonom_fahren : Entf.  79cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:51: INFO -  autonom_fahren : Entf.  79cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:52: INFO -  autonom_fahren : Entf.  79cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:52: INFO -  autonom_fahren : Entf.  91cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:52: INFO -  autonom_fahren : Entf.  91cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:52: INFO -  autonom_fahren : Entf.  91cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:53: INFO -  autonom_fahren : Entf.  91cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:53: INFO -  autonom_fahren : Entf.  74cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:53: INFO -  autonom_fahren : Entf.  74cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:53: INFO -  autonom_fahren : Entf.  74cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:54: INFO -  autonom_fahren : Entf.  74cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:54: INFO -  autonom_fahren : Entf.  74cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:54: INFO -  autonom_fahren : Entf.  65cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:54: INFO -  autonom_fahren : Entf.  65cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:54: INFO -  autonom_fahren : Entf.  65cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:55: INFO -  autonom_fahren : Entf.  65cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:55: INFO -  autonom_fahren : Entf.  28cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:50:55: INFO -  autonom_fahren : Entf.  28cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:50:55: INFO -  autonom_fahren : Entf.  28cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:50:56: INFO -  autonom_fahren : Entf.  28cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:50:56: INFO -  autonom_fahren : Entf.  28cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:50:56: INFO -  autonom_fahren : Entf.  95cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:56: INFO -  autonom_fahren : Entf.  95cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:57: INFO -  autonom_fahren : Entf.  95cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:57: INFO -  autonom_fahren : Entf.  95cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:57: INFO -  autonom_fahren : Entf.  67cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:57: INFO -  autonom_fahren : Entf.  67cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:58: INFO -  autonom_fahren : Entf.  67cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:58: INFO -  autonom_fahren : Entf.  67cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:58: INFO -  autonom_fahren : Entf.  96cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:58: INFO -  autonom_fahren : Entf.  96cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:58: INFO -  autonom_fahren : Entf.  96cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:59: INFO -  autonom_fahren : Entf.  96cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:59: INFO -  autonom_fahren : Entf.  96cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:59: INFO -  autonom_fahren : Entf.  81cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:50:59: INFO -  autonom_fahren : Entf.  81cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:00: INFO -  autonom_fahren : Entf.  81cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:00: INFO -  autonom_fahren : Entf.  81cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:00: INFO -  autonom_fahren : Entf.  45cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:51:00: INFO -  autonom_fahren : Entf.  45cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:51:00: INFO -  autonom_fahren : Entf.  45cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:51:01: INFO -  autonom_fahren : Entf.  45cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:51:01: INFO -  autonom_fahren : Entf.  45cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:51:01: INFO -  autonom_fahren : Entf.  68cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:01: INFO -  autonom_fahren : Entf.  68cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:02: INFO -  autonom_fahren : Entf.  68cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:02: INFO -  autonom_fahren : Entf.  68cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:02: INFO -  autonom_fahren : Entf.  33cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:51:02: INFO -  autonom_fahren : Entf.  33cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:51:03: INFO -  autonom_fahren : Entf.  33cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:51:03: INFO -  autonom_fahren : Entf.  33cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:51:03: INFO -  autonom_fahren : Entf.  33cm , Speed  40% , VOR    , gedrosselt
+21-02-2022 15:51:03: INFO -  autonom_fahren : Entf.  53cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:04: INFO -  autonom_fahren : Entf.  53cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:04: INFO -  autonom_fahren : Entf.  53cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:04: INFO -  autonom_fahren : Entf.  53cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:04: INFO -  autonom_fahren : Entf.   6cm , Speed   0% , STOP   , angehalten
+21-02-2022 15:51:05: INFO -  autonom_fahren : Drehung       Speed  10% , LINKS 
+21-02-2022 15:51:07: INFO -  autonom_fahren : Drehung       Speed   0% , STOP  
+21-02-2022 15:51:08: INFO -  autonom_fahren : Entf.  82cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:08: INFO -  autonom_fahren : Entf.  82cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:08: INFO -  autonom_fahren : Entf.  82cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:08: INFO -  autonom_fahren : Entf.  74cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:08: INFO -  autonom_fahren : Entf.  74cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:09: INFO -  autonom_fahren : Entf.  74cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:09: INFO -  autonom_fahren : Entf.  74cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:09: INFO -  autonom_fahren : Entf.  74cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:09: INFO -  autonom_fahren : Entf.  62cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:10: INFO -  autonom_fahren : Entf.  62cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:10: INFO -  autonom_fahren : Entf.  62cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:10: INFO -  autonom_fahren : Entf.  62cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:10: INFO -  autonom_fahren : Entf.  19cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:51:11: INFO -  autonom_fahren : Entf.  19cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:51:11: INFO -  autonom_fahren : Entf.  19cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:51:11: INFO -  autonom_fahren : Entf.  19cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:51:11: INFO -  autonom_fahren : Entf.  19cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:51:12: INFO -  autonom_fahren : Entf.   4cm , Speed   0% , STOP   , angehalten
+21-02-2022 15:51:12: INFO -  autonom_fahren : Drehung       Speed  10% , RECHTS
+21-02-2022 15:51:14: INFO -  autonom_fahren : Drehung       Speed   0% , STOP  
+21-02-2022 15:51:15: INFO -  autonom_fahren : Entf.  88cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:15: INFO -  autonom_fahren : Entf.  88cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:15: INFO -  autonom_fahren : Entf.  88cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:16: INFO -  autonom_fahren : Entf.  60cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:16: INFO -  autonom_fahren : Entf.  60cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:16: INFO -  autonom_fahren : Entf.  60cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:16: INFO -  autonom_fahren : Entf.  60cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:16: INFO -  autonom_fahren : Entf.  60cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:17: INFO -  autonom_fahren : Entf.  80cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:17: INFO -  autonom_fahren : Entf.  80cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:17: INFO -  autonom_fahren : Entf.  80cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:17: INFO -  autonom_fahren : Entf.  80cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:18: INFO -  autonom_fahren : Entf.  12cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:51:18: INFO -  autonom_fahren : Entf.  12cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:51:18: INFO -  autonom_fahren : Entf.  12cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:51:18: INFO -  autonom_fahren : Entf.  12cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:51:18: INFO -  autonom_fahren : Entf.  12cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:51:19: INFO -  autonom_fahren : Entf.  96cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:19: INFO -  autonom_fahren : Entf.  96cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:19: INFO -  autonom_fahren : Entf.  96cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:19: INFO -  autonom_fahren : Entf.  96cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:20: INFO -  autonom_fahren : Entf.  62cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:20: INFO -  autonom_fahren : Entf.  62cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:20: INFO -  autonom_fahren : Entf.  62cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:20: INFO -  autonom_fahren : Entf.  62cm , Speed 100% , VOR    , Vollgas
+21-02-2022 15:51:21: INFO -  autonom_fahren : Entf.  19cm , Speed  10% , VOR    , stark gedrosselt
+21-02-2022 15:51:21: INFO -  autonom_fahren : Autonomes Fahren stopped
+21-02-2022 15:51:21: INFO -  manuell_fahren : Manuelles Fahren started
+21-02-2022 15:51:35: INFO -  manuell_fahren : Manuelles Fahren stopped
+21-02-2022 15:51:35: INFO -       loop_main : HW ordnungsgemäß heruntergefahren
+21-02-2022 15:51:35: INFO -       loop_main : Zentralschleife stopped
+21-02-2022 15:51:37: INFO -           taste : Thread stopped      17008
+21-02-2022 15:51:37: INFO -        distance : Thread stopped      19484
+21-02-2022 15:51:39: INFO -         anzeige : Thread stopped      14740
+21-02-2022 15:51:39: INFO -           _main : Thread stopped      16376
+21-02-2022 15:51:45: INFO - >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+21-02-2022 15:51:45: INFO -           _main : Thread started      15392
+21-02-2022 15:51:47: INFO -         anzeige : Thread started      14656
+21-02-2022 15:51:48: INFO -        distance : Thread started        920
+21-02-2022 15:51:49: INFO -           taste : Thread started      16872
+21-02-2022 15:51:50: INFO -       loop_main : Zentralschleife started
+21-02-2022 15:51:50: INFO -  manuell_fahren : Manuelles Fahren started
+21-02-2022 15:51:55: WARNING -           _main : Thread interrupted by CTRL-C      15392
+21-02-2022 15:51:55: ERROR -           _main : Exception occurred      15392
+Traceback (most recent call last):
+  File "o:\01_Daten\DatenLocal\Entwicklung\Python\robot01\robot-control.py", line 591, in _main
+    loop_main(ev_stop, qu)
+  File "o:\01_Daten\DatenLocal\Entwicklung\Python\robot01\robot-control.py", line 529, in loop_main
+    manuell_fahren(ev_stop, qu)
+  File "o:\01_Daten\DatenLocal\Entwicklung\Python\robot01\robot-control.py", line 509, in manuell_fahren
+    sleep(0.2)
+KeyboardInterrupt
+21-02-2022 15:52:45: INFO -           taste : Thread stopped      16872

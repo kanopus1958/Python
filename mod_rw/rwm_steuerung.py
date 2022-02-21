@@ -33,6 +33,9 @@ class color:
     lightgreen = '\033[92m'
     lightblue = '\033[94m'
     lightcyan = '\033[96m'
+    liste = (black, red, green, orange, blue, purple, pink, cyan, white,
+             yellow, lightgrey, darkgrey, lightred, lightgreen,
+             lightblue, lightcyan)
 
 
 class key_stroke:

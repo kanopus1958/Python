@@ -553,7 +553,7 @@ def _main():
     log = os.path.basename(__file__).replace(".py", ".log")
     log_file = homedir = os.path.expanduser('~')+'/Python/logs/'+log
     if platform.system() == 'Windows':
-        log_file = str(Path(os.getcwd()).parent)+'\\logs\\'+log
+        log_file = str(Path(os.getcwd()))+'\\logs\\'+log
     logging.basicConfig(format=format, level=logging.WARNING,
                         datefmt="%d-%m-%Y %H:%M:%S", filename=log_file,
                         filemode='a')

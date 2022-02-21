@@ -23,8 +23,11 @@ from rwm_steuerung import color as c, key_stroke as k
 
 
 def getkey():
-    key = readchar.readkey()
-    return key
+    try:
+        key = readchar.readkey()
+        return key
+    except UnicodeDecodeError:
+        return ""
 
 
 def getch():

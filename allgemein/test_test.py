@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 # Programm     : test_test.py
-# Version      : 1.01
-# SW-Stand     : 17.02.2022
+# Version      : 1.02
+# SW-Stand     : 19.02.2022
 # Autor        : Kanopus1958
 # Beschreibung : Allgemeines Testprogramm für Python
 
@@ -246,6 +246,54 @@ def test_07():
     return
 
 
+def g():
+    print("Hallo, ich bin es, 'g'")
+    print("Danke für's Aufrufen")
+
+
+def f(func):
+    print("Hallo, ich bin es, 'f'")
+    print("Ich werde jetzt 'func' aufrufen")
+    print(f'Der Object-Typ von func ist : {type(func)}')
+    func()
+    print("func's echter Name ist " + func.__name__)
+
+
+def test_08():
+    print(c.yellow, f"Test Funktion : ",
+          f"{sys._getframe(  ).f_code.co_name}", c.reset, sep="")
+
+    f(g)
+
+    print(c.yellow, 60*"-", c.reset, sep="")
+    return
+
+
+def test_09():
+    print(c.yellow, f"Test Funktion : ",
+          f"{sys._getframe(  ).f_code.co_name}", c.reset, sep="")
+
+    sleep(2.0)
+    str_var = 'String-Variable'
+    int_var = 1234567890
+    float_var = 76348.0987654321
+    print(f'01. Ausgabe : String-Variable = {str_var:>28s}\n')
+    for farben in c.liste:
+        print(f'{farben}02. Ausgabe : String-Variable = '
+              f'{str_var:>28s}{c.reset}')
+    print(f'\n03. Ausgabe : Ganzzahl-Variable = {int_var:>26,d}')
+    print(f'04. Ausgabe : Dezimalzahl-Variable = {float_var:>23,.8f}\n')
+    print(f'05. Ausgabe : Dezimalzahl-Variable = {float_var:>23.6e}\n')
+    for farben in c.liste:
+        print(f'{farben}06. Ausgabe : String-Variable = '
+              f'{str_var:>28s}{c.reset}\r', end='')
+        sleep(0.5)
+    print()
+
+    print(c.yellow, 60*"-", c.reset, sep="")
+    return
+
+
 def _main():
     try:
         show_header(G_HEADER_1, G_HEADER_2, __file__, G_OS)
@@ -255,7 +303,9 @@ def _main():
         # test_04()
         # test_05()
         # test_06()
-        test_07()
+        # test_07()
+        test_08()
+        # test_09()
         sleep(0.5)
     except(KeyboardInterrupt, SystemExit):
         print()
@@ -263,8 +313,8 @@ def _main():
         sleep(1.0)
         print(c.lightred, p.up)
         print(
-              3*" ", "\n!!! Abbruch mit Ctrl-C (SIGINT) "
-              "oder CTRL-Z (SIGTSTP) !!!\n", c.reset)
+            3*" ", "\n!!! Abbruch mit Ctrl-C (SIGINT) "
+            "oder CTRL-Z (SIGTSTP) !!!\n", c.reset)
 
 
 if __name__ == "__main__":

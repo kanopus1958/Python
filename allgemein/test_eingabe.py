@@ -8,7 +8,7 @@
 
 from time import sleep
 from rwm_mod01 import show_header, getch
-from rwm_steuerung import color as c, key_stroke as k
+from rwm_steuerung import color as c, key_stroke as k, position as p
 import platform
 
 G_OS = ('Raspbian', 'Debian', 'Windows')
