@@ -17,7 +17,7 @@ G_HEADER_2 = '                             #'
 def _main():
     show_header(G_HEADER_1, G_HEADER_2, __file__, G_OS)
 
-    laenge = 400
+    laenge = 500
     winkel = 170
     n = 0
     tu.color('red', 'yellow')
@@ -32,12 +32,6 @@ def _main():
             break
     tu.end_fill()
     tu.done()
-
-    # tu.forward(200)
-    # tu.circle(150, 90)
-    # tu.position()
-
-    # tu.done()
 
 
 if __name__ == "__main__":
