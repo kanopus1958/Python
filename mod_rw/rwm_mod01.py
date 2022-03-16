@@ -10,8 +10,11 @@
 #                getch()
 #                aktuelle_uhrzeit()
 #                aktuelles_datum()
+#                aktuelles_datum_kurz()
 #                show_header()
 #                clean_console()
+#                datum_zu_ts()
+#                ts_zu_datum()
 
 import os
 import platform
@@ -28,6 +31,11 @@ def getkey():
         return key
     except UnicodeDecodeError:
         return ""
+
+
+def getkey_old():
+    key = readchar.readkey()
+    return key
 
 
 def getch():
@@ -47,6 +55,12 @@ def aktuelle_uhrzeit():
 def aktuelles_datum():
     now = datetime.datetime.now()
     datum = now.strftime('%A %d.%m.%Y')
+    return datum
+
+
+def aktuelles_datum_kurz():
+    now = datetime.datetime.now()
+    datum = now.strftime('%d.%m.%Y')
     return datum
 
 
@@ -92,3 +106,13 @@ def clean_console():
         command = 'cls'
     os.system(command)
     return
+
+
+def datum_zu_ts(datumzeit):
+    return datetime.datetime. \
+        strptime(datumzeit, "%d.%m.%Y %H:%M:%S").timestamp()
+
+
+def ts_zu_datum(timestamp):
+    return datetime.datetime. \
+        fromtimestamp(timestamp).strftime("%d.%m.%Y %H:%M:%S")

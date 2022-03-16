@@ -54,6 +54,25 @@ class key_stroke:
     CTRL_D = '\x04'
     CTRL_E = '\x05'
     CTRL_F = '\x06'
+    CTRL_G = '\x07'
+    CTRL_H = '\x08'
+    CTRL_I = '\t'
+    CTRL_J = '\n'
+    CTRL_K = '\x0b'
+    CTRL_L = '\x0c'
+    CTRL_M = '\r'
+    CTRL_N = '\x0e'
+    CTRL_O = '\x0f'
+    CTRL_P = '\x10'
+    CTRL_Q = '\x11'
+    CTRL_R = '\x12'
+    CTRL_S = '\x13'
+    CTRL_T = '\x14'
+    CTRL_U = '\x15'
+    CTRL_V = '\x16'
+    CTRL_W = '\x17'
+    CTRL_X = '\x18'
+    CTRL_Y = '\x19'
     CTRL_Z = '\x1a'
     # ALT
     ALT_A = '\x1b\x61'
@@ -84,3 +103,28 @@ class key_stroke:
     END = '\x1b\x5b\x46'
     INSERT = '\x1b\x5b\x32\x7e'
     SUPR = '\x1b\x5b\x33\x7e'
+    # escape sequences
+    ESCAPE_SEQUENCES = (
+        ESC,
+        ESC + "\x5b",
+        ESC + "\x5b" + "\x31",
+        ESC + "\x5b" + "\x32",
+        ESC + "\x5b" + "\x33",
+        ESC + "\x5b" + "\x35",
+        ESC + "\x5b" + "\x36",
+        ESC + "\x5b" + "\x31" + "\x35",
+        ESC + "\x5b" + "\x31" + "\x36",
+        ESC + "\x5b" + "\x31" + "\x37",
+        ESC + "\x5b" + "\x31" + "\x38",
+        ESC + "\x5b" + "\x31" + "\x39",
+        ESC + "\x5b" + "\x32" + "\x30",
+        ESC + "\x5b" + "\x32" + "\x31",
+        ESC + "\x5b" + "\x32" + "\x32",
+        ESC + "\x5b" + "\x32" + "\x33",
+        ESC + "\x5b" + "\x32" + "\x34",
+        ESC + "\x4f",
+        ESC + ESC,
+        ESC + ESC + "\x5b",
+        ESC + ESC + "\x5b" + "\x32",
+        ESC + ESC + "\x5b" + "\x33",
+    )
