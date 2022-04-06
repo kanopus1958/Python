@@ -2,47 +2,52 @@
 
 # Programm     : depot.py
 # Version      : 1.00
-# SW-Stand     : 15.03.2022
+# SW-Stand     : 27.03.2022
 # Autor        : Kanopus1958
 # Beschreibung : Aktueller Depotbestand
 
-import sys
 import os
 import requests
 from bs4 import BeautifulSoup
 import time
-from rwm_mod01 import show_header, aktuelles_datum_kurz, aktuelle_uhrzeit
-from rwm_steuerung import color as c
+import sqlite3
+from sqlite3 import Error
+from rwm_mod01 import show_header, aktuelles_datum_kurz, \
+    aktuelle_uhrzeit, datum_zu_ts
 
-G_OS = ('Raspbian', 'Debian', 'Windows')
+G_OS = ('Windows')
 G_HEADER_1 = '# Aktueller Depotbestand      '
 G_HEADER_2 = '                             #'
 
-HILFS_LISTE = ['Anz', 'Invest', 'Url', 'Bez', 'Datum',
-               'Uhrzeit', 'Handel', 'Wert', 'DiffEur', 'DiffProz']
+database = r'O:\01_Daten\DatenLocal\Datenbanken\SQLite\finanzanlage.db'
 
-depot = {}
-wps = {}
+HILFS_LISTE = ['Anz', 'Invest', 'Url', 'Bez', 'Datum',
+               'Uhrzeit', 'Handel', 'Kurs', 'DiffEur',
+               'DiffProz', 'Wert', 'G_V']
+
 wp_temp = {}
 del_id = []
+md = {}
+wps = {}
+summen = {}
 
 
 def einlesen_input():
     input_datei = os.path.realpath(__file__).replace(".py", ".input")
     if not os.path.isfile(input_datei):
-        print(f'{c.lightred}\nError --> Input-Datei exitiert '
-              f'nicht :\n{input_datei}{c.reset}\n')
+        print(f'\nFehler : Input-Datei existiert nicht\nError : '
+              f'"{input_datei}"')
         return False
     with open(input_datei, 'r') as fobj:
         for line in fobj:
             if line.strip().count('@@@'):
                 zeile = line.strip().split()
                 if '@@@URL@@@' in zeile:
-                    depot['Url'] = zeile[1]
+                    md['Url'] = zeile[1]
                 if '@@@KONTO@@@' in zeile:
-                    depot['Konto'] = float(zeile[1])
+                    md['Konto'] = float(zeile[1])
                 if '@@@KOSTEN@@@' in zeile:
-                    depot['Kosten'] = float(zeile[1])
+                    md['Kosten'] = float(zeile[1])
                 if '@@@WP@@@' in zeile:
                     zeile = zeile[1:]
                     zeile[1] = int(zeile[1])
@@ -51,8 +56,228 @@ def einlesen_input():
     return True
 
 
-def depot_bestandsermittlung(id):
-    page = requests.get(depot['Url'] + wps[id]['Url'])
+def create_connection(db_file):
+    if os.path.isfile(db_file):
+        try:
+            conn = sqlite3.connect(db_file)
+            return conn
+        except Error as e:
+            print(f'\nFehler : Datenbankverbindung gescheitert\nError : "{e}"')
+        return None
+    else:
+        print(f'\nFehler : Datenbankdatei existiert nicht\nError : '
+              f'"{db_file}"')
+        return None
+
+
+def init_database(conn):
+    sql_create_vermoegen_table = '''
+    CREATE TABLE IF NOT EXISTS vermoegen (
+    Id         INTEGER PRIMARY KEY,
+    Datum      TEXT    NOT NULL
+                       UNIQUE,
+    Timestamp  REAL    NOT NULL,
+    Datum_Zeit TEXT    NOT NULL,
+    Konto      REAL    NOT NULL,
+    Kosten     REAL    NOT NULL,
+    Wert       REAL    NOT NULL,
+    Invest     REAL    NOT NULL,
+    G_V        REAL    NOT NULL
+    );
+    '''
+    sql_create_wertpapiere_table = '''
+    CREATE TABLE IF NOT EXISTS wertpapiere (
+    Id       INTEGER PRIMARY KEY,
+    Kurz_Bez TEXT UNIQUE
+                  NOT NULL,
+    Url      TEXT NOT NULL,
+    Bez      TEXT NOT NULL,
+    Handel   TEXT NOT NULL    );
+    '''
+    sql_create_kurse_table = '''
+    CREATE TABLE IF NOT EXISTS kurse (
+    Id            INTEGER PRIMARY KEY,
+    Wertpapier_Id INTEGER NOT NULL,
+    Datum         TEXT    NOT NULL,
+    Timestamp     REAL    NOT NULL,
+    Datum_Zeit    TEXT    NOT NULL,
+    Anz           INTEGER NOT NULL,
+    Kurs          REAL    NOT NULL,
+    Diff_EUR      REAL    NOT NULL,
+    Diff_Proz     REAL    NOT NULL,
+    Wert          REAL    NOT NULL,
+    Invest        REAL    NOT NULL,
+    G_V           REAL    NOT NULL,
+    FOREIGN KEY (
+        Wertpapier_Id
+    )
+    REFERENCES wertpapiere (Id)    );
+    '''
+    create_table(conn, sql_create_vermoegen_table)
+    create_table(conn, sql_create_wertpapiere_table)
+    create_table(conn, sql_create_kurse_table)
+    return True
+
+
+def create_table(conn, create_table_sql):
+    try:
+        cur = conn.cursor()
+        cur.execute(create_table_sql)
+        conn.commit()
+        cur.close()
+    except Error as e:
+        print(f'\nFehler : Neuanlage Tabelle fehlgeschlagen\nError : "{e}"')
+
+
+def lese_datensatz(conn, sql, sql_param):
+    cur = conn.cursor()
+    datensatz = cur.execute(sql, sql_param).fetchone()
+    if datensatz is not None:
+        return datensatz
+    else:
+        return None
+
+
+def create_vermoeg(conn, vermoeg):
+    lastkey = None
+    sql = f''' SELECT * FROM vermoegen WHERE
+                Datum = ? '''
+    sql_param = [vermoeg[0], ]
+    datensatz = lese_datensatz(conn, sql, sql_param)
+    if not datensatz:
+        sql = ''' INSERT INTO vermoegen(Datum,Timestamp,Datum_Zeit,
+                Konto,Kosten,Wert,Invest,G_V)
+                VALUES(?,?,?,?,?,?,?,?) '''
+        sql_param = vermoeg
+        try:
+            cur = conn.cursor()
+            cur.execute(sql, sql_param)
+            conn.commit()
+            lastkey = cur.lastrowid
+            cur.close()
+        except Error as e:
+            print(f'\nInfo : Vermöegenseintrag '
+                  f'existiert schon \nError : "{e}"\n')
+    else:
+        sql = ''' UPDATE vermoegen
+                  SET Timestamp = ?,
+                      Datum_Zeit = ?,
+                      Konto = ?,
+                      Kosten = ?,
+                      Wert = ?,
+                      Invest = ?,
+                      G_V = ?
+                  WHERE Id = ? '''
+        sql_param = vermoeg[1:]
+        sql_param.append(datensatz[0])
+        cur = conn.cursor()
+        cur.execute(sql, sql_param)
+        conn.commit()
+        cur.close()
+        lastkey = datensatz[0]
+    return lastkey
+
+
+def create_wertpapier(conn, wertpapier):
+    lastkey = None
+    sql = ''' INSERT INTO wertpapiere(Kurz_Bez,Url,Bez,Handel)
+              VALUES(?,?,?,?) '''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, wertpapier)
+        conn.commit()
+        lastkey = cur.lastrowid
+        cur.close()
+    except Error as e:
+        # print(f'\nInfo : Wertpapier existiert schon \nError : "{e}"\n')
+        pass
+    return lastkey
+
+
+def create_kurs(conn, kurs):
+    lastkey = None
+    sql = f''' SELECT * FROM kurse WHERE
+                Wertpapier_Id = ?  AND Datum = ? '''
+    sql_param = kurs[0:2]
+    datensatz = lese_datensatz(conn, sql, sql_param)
+    if not datensatz:
+        sql = ''' INSERT INTO kurse(Wertpapier_Id,Datum,Timestamp,Datum_Zeit,
+                Anz,Kurs,Diff_EUR,Diff_Proz,Wert,Invest,G_V)
+                VALUES(?,?,?,?,?,?,?,?,?,?,?) '''
+        sql_param = kurs
+        try:
+            cur = conn.cursor()
+            cur.execute(sql, sql_param)
+            conn.commit()
+            lastkey = cur.lastrowid
+            cur.close()
+        except Error as e:
+            print(f'\nInfo : Kursseintrag '
+                  f'existiert schon \nError : "{e}"\n')
+    else:
+        sql = ''' UPDATE kurse
+                  SET Timestamp = ?,
+                      Datum_Zeit = ?,
+                      Anz = ?,
+                      Kurs = ?,
+                      Diff_EUR = ?,
+                      Diff_Proz = ?,
+                      Wert = ?,
+                      Invest = ?,
+                      G_V = ?
+                  WHERE Id = ? '''
+        sql_param = kurs[2:]
+        sql_param.append(datensatz[0])
+        cur = conn.cursor()
+        cur.execute(sql, sql_param)
+        conn.commit()
+        cur.close()
+        lastkey = datensatz[0]
+    return lastkey
+
+
+def db_update(conn):
+    datum = aktuelles_datum_kurz()
+    zeit = aktuelle_uhrzeit()
+    datum_zeit = datum + ' ' + zeit
+    datensatz_depot = [datum, datum_zu_ts(datum_zeit), datum_zeit,
+                       summen["Konto"],
+                       summen["Kosten"],
+                       summen["Wert_abs"],
+                       summen["Invest_abs"],
+                       summen["G_V_abs"]
+                       ]
+    lastkey = create_vermoeg(conn, datensatz_depot)
+    for wp, details in wps.items():
+        datensatz_wertpapier = [wp,
+                                details["Url"],
+                                details["Bez"],
+                                details["Handel"]
+                                ]
+        wertpapier_id = create_wertpapier(conn, datensatz_wertpapier)
+        if wertpapier_id is None:
+            sql = f''' SELECT * FROM wertpapiere WHERE
+                        Kurz_Bez = ? '''
+            sql_param = [wp, ]
+            wertpapier_id = lese_datensatz(conn, sql, sql_param)[0]
+        datum_zeit = details["Datum"] + ' ' + details["Uhrzeit"]
+        datensatz_kurs = [wertpapier_id,
+                          details["Datum"],
+                          datum_zu_ts(datum_zeit),
+                          datum_zeit,
+                          details["Anz"],
+                          details["Kurs"],
+                          details["DiffEur"],
+                          details["DiffProz"],
+                          details["Wert"],
+                          details["Invest"],
+                          details["G_V"]
+                          ]
+        lastkey = create_kurs(conn, datensatz_kurs)
+
+
+def einlesen_webdaten(id):
+    page = requests.get(md['Url'] + wps[id]['Url'])
     if page.status_code != 200:
         print(f'{c.lightred}\nFehler bei Wertpapierabfrage "{id}"\n'
               f'Return-Code der HTML-Seite = {page.status_code}{c.reset}')
@@ -74,77 +299,105 @@ def depot_bestandsermittlung(id):
                 werte[3] = aktuelles_datum_kurz()
             else:
                 werte[4] = '00:00:00'
-            # print(werte)
     wp_temp = {'Datum': werte[3], 'Uhrzeit': werte[4],
-               'Handel': werte[5], 'Wert': float(werte[0]),
+               'Handel': werte[5], 'Kurs': float(werte[0]),
                'DiffEur': float(werte[1]),
-               'DiffProz': float(werte[2])}
+               'DiffProz': float(werte[2]),
+               'Wert': round(float(wps[id]['Anz'] * float(werte[0])), 2),
+               'G_V': round(float((wps[id]['Anz'] * float(werte[0]))
+                                  - wps[id]['Invest']), 2)}
     wps[id].update(wp_temp)
     return True
 
 
-def wertpapier_entwicklung():
-    msg = f''
-    msg += f'WERTPAPIER ENTWICKLUNG ' \
-        f'(Stand: {aktuelles_datum_kurz()} {aktuelle_uhrzeit()})\n'
-    msg += f'Fond / Wertpapier                             Kurs  Diff €' \
-        f'  Diff %  Handel          Datum/Uhrzeit\n'
-    msg += f'{97*"-"}\n'
+def aufbereitung_daten():
+    gesamt_invest = 0.0
+    gesamt_summe = 0.0
+    gesamt_resultat = 0.0
     for wp, details in wps.items():
-        msg += f'{details["Bez"]:38s} : ' \
-            f'{details["Wert"]:8.2f}€ ' \
-            f'{details["DiffEur"]:+6.2f}€ ' \
-            f'{details["DiffProz"]:+6.2f}%     ' \
-            f'{details["Handel"]:3s}  ' \
-            f'({details["Datum"]} {details["Uhrzeit"]})\n'
-    return msg
+        gesamt_invest += details["Invest"]
+        gesamt_summe += details["Wert"]
+        gesamt_resultat += details["G_V"]
+    summen["Konto"] = round(md["Konto"], 2)
+    summen["Kosten"] = -1.0*round(md["Kosten"], 2)
+    summen["Wert"] = round(gesamt_summe, 2)
+    summen["Invest"] = round(gesamt_invest, 2)
+    summen["G_V"] = round(gesamt_resultat, 2)
+    summen["Wert_abs"] = round(gesamt_summe + md["Konto"] - md["Kosten"], 2)
+    summen["Invest_abs"] = round(gesamt_invest + md["Konto"], 2)
+    summen["G_V_abs"] = round(gesamt_resultat - md["Kosten"], 2)
+    # print(f'\nwps : {wps}')
+    # print(f'\nsummen : {summen}')
 
 
-def depot_bestand():
-    gesamt_invest = 0
-    gesamt_summe = 0
-    gesamt_resultat = 0
+def druckdaten_depot():
     msg = f''
     msg += f'AKTUELLER DEPOTWERT    ' \
-        f'(Stand: {aktuelles_datum_kurz()} {aktuelle_uhrzeit()})\n'
+           f'(Stand: {aktuelles_datum_kurz()} {aktuelle_uhrzeit()})\n'
     msg += f'Fond / Wertpapier                             Kurs     Anz' \
-        f'         Wert       Invest          G/V\n'
+           f'         Wert       Invest          G/V\n'
     msg += f'{97*"-"}\n'
     for wp, details in wps.items():
         anz = details["Anz"]
-        gesamt_invest += (invest := details["Invest"])
-        gesamt_summe += (summe := details["Wert"] * anz)
-        gesamt_resultat += (resultat := summe - details["Invest"])
         msg += f'{details["Bez"]:38s} : ' \
-            f'{details["Wert"]:8.2f}€ x ' \
-            f'{anz:5d}' \
-            f'{summe:12.2f}€' \
+            f'{details["Kurs"]:8.2f}€ x ' \
+            f'{details["Anz"]:5d}' \
+            f'{details["Wert"]:12.2f}€' \
             f'{details["Invest"]:12.2f}€' \
-            f'{resultat:12.2f}€\n'
-    msg += f'{gesamt_summe:>70,.2f}€  {gesamt_invest:10,.2f}€  ' \
-        f'{gesamt_resultat:10,.2f}€\n\n'
-    msg += f'Vermögen (inkl. Konto {depot["Konto"]:+8.2f}€ ' \
-        f'und Kosten {-1.0*depot["Kosten"]:+8.2f}€) :' \
-        f'{gesamt_summe + depot["Konto"] - depot["Kosten"]:>15,.2f}€  ' \
-        f'{gesamt_invest + depot["Konto"]:10,.2f}€  ' \
-        f'{gesamt_resultat - depot["Kosten"]:10,.2f}€\n'
+            f'{details["G_V"]:12.2f}€\n'
+    msg += f'{summen["Wert"]:>70,.2f}€  {summen["Invest"]:10,.2f}€  ' \
+           f'{summen["G_V"]:10,.2f}€\n\n'
+    msg += f'Vermögen (inkl. Konto {summen["Konto"]:+8.2f}€ ' \
+           f'und Kosten {summen["Kosten"]:+8.2f}€) :' \
+           f'{summen["Wert_abs"]:>15,.2f}€  ' \
+           f'{summen["Invest_abs"]:10,.2f}€  ' \
+           f'{summen["G_V_abs"]:10,.2f}€\n'
+    return msg
+
+
+def druckdaten_wp():
+    msg = f''
+    msg += f'WERTPAPIER ENTWICKLUNG ' \
+           f'(Stand: {aktuelles_datum_kurz()} {aktuelle_uhrzeit()})\n'
+    msg += f'Fond / Wertpapier                             Kurs  Diff €' \
+           f'  Diff %  Handel          Datum/Uhrzeit\n'
+    msg += f'{97*"-"}\n'
+    for wp, details in wps.items():
+        msg += f'{details["Bez"]:38s} : ' \
+               f'{details["Kurs"]:8.2f}€ ' \
+               f'{details["DiffEur"]:+6.2f}€ ' \
+               f'{details["DiffProz"]:+6.2f}%     ' \
+               f'{details["Handel"]:3s}  ' \
+               f'({details["Datum"]} {details["Uhrzeit"]})\n'
     return msg
 
 
 def _main():
     show_header(G_HEADER_1, G_HEADER_2, __file__, G_OS)
-    if not einlesen_input():
-        sys.exit(False)
-    for id in wps:
-        if not depot_bestandsermittlung(id):
-            del_id.append(id)
-    for loesch_eintrag in del_id:
-        del wps[loesch_eintrag]
-    print(f'\n{wertpapier_entwicklung()}')
-    print(f'{depot_bestand()}')
+    stop = False
+    if einlesen_input():
+        conn = create_connection(database)
+        if not conn:
+            stop = True
+    else:
+        stop = True
+    if not stop:
+        init_database(conn)
+        for id in wps:
+            if not einlesen_webdaten(id):
+                del_id.append(id)
+        for loesch_eintrag in del_id:
+            del wps[loesch_eintrag]
+        aufbereitung_daten()
+        print(f'\n{druckdaten_wp()}')
+        print(f'{druckdaten_depot()}')
+        db_update(conn)
+        conn.close()
+    else:
+        print(f'Programm abgebrochen\n')
 
 
 if __name__ == "__main__":
     t0 = time.perf_counter()
     _main()
-    # print(f'Laufzeit : {time.perf_counter() - t0:8,.4f} Sekunden\n')
+    print(f'\nLaufzeit : {time.perf_counter() - t0:8,.4f} Sekunden\n')

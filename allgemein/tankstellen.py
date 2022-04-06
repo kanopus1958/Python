@@ -2,11 +2,11 @@
 
 # Programm     : tankstellen.py
 # Version      : 1.00
-# SW-Stand     : 18.03.2022
+# SW-Stand     : 21.03.2022
 # Autor        : Kanopus1958
 # Beschreibung : Ermittlung aktueller Treibstoffpreise
 
-import sys
+from os import path
 import requests
 from bs4 import BeautifulSoup
 import time
@@ -75,47 +75,55 @@ class tankstelle():
             print(f'   {k:<20s} : {self.daten["Treibstoffe"][k]:>8.3f} €')
         return
 
-    def db_update(self):
-        with create_connection(database)as conn:
-            tankstelle = (self.daten["Id"], self.daten["Name"],
-                          self.daten["Plz"],
-                          self.daten["Stadt"], self.daten["Strasse"])
-            tankstelle_id = create_tankstelle(conn, tankstelle)
-            if tankstelle_id is None:
-                sql = f''' SELECT * FROM tankstellen WHERE
-                        Url = "{self.daten["Id"]}" '''
-                tankstelle_id = get_primk(conn, sql)
-            # print(f'tankstelle_id = {tankstelle_id}')
-            for k in self.daten['Treibstoffe'].keys():
-                treibstoff = (k,)
-                treibstoff_id = create_treibstoff(conn, treibstoff)
-                if treibstoff_id is None:
-                    sql = f''' SELECT * FROM treibstoffe WHERE
-                            Bezeichnung = "{k}" '''
-                    treibstoff_id = get_primk(conn, sql)
-                    # print(f'treibstoff_id = {treibstoff_id}')
-                preis = (tankstelle_id, treibstoff_id,
-                         datum_zu_ts(self.daten["Aktualisierung"] + ':00'),
-                         self.daten["Treibstoffe"][k],
-                         self.daten["Aktualisierung"])
-                if not check_preis(conn, preis):
-                    preis_id = create_preis(conn, preis)
+    def db_update(self, conn):
+        tankstelle = (self.daten["Id"], self.daten["Name"],
+                      self.daten["Plz"],
+                      self.daten["Stadt"], self.daten["Strasse"])
+        tankstelle_id = create_tankstelle(conn, tankstelle)
+        if tankstelle_id is None:
+            sql = f''' SELECT * FROM tankstellen WHERE
+                    Url = "{self.daten["Id"]}" '''
+            tankstelle_id = lese_datensatz(conn, sql)[0]
+        # print(f'tankstelle_id = {tankstelle_id}')
+        for k in self.daten['Treibstoffe'].keys():
+            treibstoff = (k,)
+            treibstoff_id = create_treibstoff(conn, treibstoff)
+            if treibstoff_id is None:
+                sql = f''' SELECT * FROM treibstoffe WHERE
+                        Bezeichnung = "{k}" '''
+                treibstoff_id = lese_datensatz(conn, sql)[0]
+                # print(f'treibstoff_id = {treibstoff_id}')
+            preis = (tankstelle_id, treibstoff_id,
+                     datum_zu_ts(self.daten["Aktualisierung"] + ':00'),
+                     self.daten["Treibstoffe"][k],
+                     self.daten["Aktualisierung"])
+            sql = f''' SELECT * FROM preise WHERE
+                        Tankstelle_Id = "{preis[0]}" AND
+                        Treibstoff_Id = "{preis[1]}" AND
+                        Timestamp = "{preis[2]}"'''
+            if not lese_datensatz(conn, sql):
+                preis_id = create_preis(conn, preis)
         return
 
 
 def create_connection(db_file):
-    conn = None
-    try:
-        conn = sqlite3.connect(db_file)
-    except Error as e:
-        print(e)
-    return conn
+    if path.isfile(db_file):
+        try:
+            conn = sqlite3.connect(db_file)
+            return conn
+        except Error as e:
+            print(f'\nFehler : Datenbankverbindung gescheitert\nError : "{e}"')
+        return None
+    else:
+        print(f'\nFehler : Datenbankdatei existiert nicht\nError : '
+              f'"{db_file}"')
+        return None
 
 
-def init_database():
-    sql_create_tankstellen_table = """
+def init_database(conn):
+    sql_create_tankstellen_table = '''
     CREATE TABLE IF NOT EXISTS tankstellen (
-        id      INTEGER PRIMARY KEY ASC AUTOINCREMENT,
+        Id      INTEGER PRIMARY KEY ASC AUTOINCREMENT,
         Url     TEXT    NOT NULL
                         UNIQUE ON CONFLICT ROLLBACK,
         Name    TEXT    NOT NULL,
@@ -123,130 +131,127 @@ def init_database():
         Stadt   TEXT    NOT NULL,
         Strasse TEXT    NOT NULL
     );
-    """
-    sql_create_treibstoffe_table = """
+    '''
+    sql_create_treibstoffe_table = '''
     CREATE TABLE IF NOT EXISTS treibstoffe (
-        id          INTEGER PRIMARY KEY ASC AUTOINCREMENT,
+        Id          INTEGER PRIMARY KEY ASC AUTOINCREMENT,
         Bezeichnung TEXT    UNIQUE ON CONFLICT ROLLBACK
                             NOT NULL
     );
-    """
-    sql_create_preise_table = """
+    '''
+    sql_create_preise_table = '''
     CREATE TABLE IF NOT EXISTS preise (
-        id            INTEGER PRIMARY KEY ASC AUTOINCREMENT,
-        tankstelle_id INTEGER NOT NULL,
-        treibstoff_id INTEGER NOT NULL,
-        timestamp     DECIMAL,
-        preis         DECIMAL,
-        datum_zeit    TEXT,
+        Id            INTEGER PRIMARY KEY ASC AUTOINCREMENT,
+        Tankstelle_Id INTEGER NOT NULL,
+        Treibstoff_Id INTEGER NOT NULL,
+        Timestamp     REAL NOT NULL,
+        Preis         REAL NOT NULL,
+        Datum_Zeit    TEXT NOT NULL,
         FOREIGN KEY (
-            tankstelle_id
+            Tankstelle_Id
         )
-        REFERENCES tankstellen (id),
+        REFERENCES tankstellen (Id),
         FOREIGN KEY (
-            treibstoff_id
+            Treibstoff_Id
         )
-        REFERENCES treibstoffe (id)
+        REFERENCES treibstoffe (Id)
     );
-    """
-    try:
-        with create_connection(database) as conn:
-            create_table(conn, sql_create_tankstellen_table)
-            create_table(conn, sql_create_treibstoffe_table)
-            create_table(conn, sql_create_preise_table)
-            return True
-    except Error as e:
-        print(f'Error! cannot create the database connection. {e}')
-        return False
+    '''
+    create_table(conn, sql_create_tankstellen_table)
+    create_table(conn, sql_create_treibstoffe_table)
+    create_table(conn, sql_create_preise_table)
+    return True
 
 
 def create_table(conn, create_table_sql):
     try:
-        c = conn.cursor()
-        c.execute(create_table_sql)
+        cur = conn.cursor()
+        cur.execute(create_table_sql)
+        conn.commit()
+        cur.close()
     except Error as e:
-        print(e)
+        print(f'\nFehler : Neuanlage Tabelle fehlgeschlagen\nError : "{e}"')
 
 
 def create_tankstelle(conn, tankstelle):
+    lastkey = None
     sql = ''' INSERT INTO tankstellen(Url,Name,Plz,Stadt,Strasse)
               VALUES(?,?,?,?,?) '''
     # print(f'Tankstelle : {tankstelle}')
-    cur = conn.cursor()
     try:
+        cur = conn.cursor()
         cur.execute(sql, tankstelle)
         conn.commit()
-        return cur.lastrowid
+        lastkey = cur.lastrowid
+        cur.close()
     except Error as e:
-        # print(f'Tankstelle existiert schon : {e}')
-        return None
+        # print(f'\nInfo : Tankstelle existiert schon \nError : "{e}"\n')
+        pass
+    return lastkey
 
 
 def create_treibstoff(conn, treibstoff):
+    lastkey = None
     sql = ''' INSERT INTO treibstoffe(Bezeichnung)
               VALUES(?) '''
     # print(f'Treibstoff : {treibstoff}')
-    cur = conn.cursor()
     try:
+        cur = conn.cursor()
         cur.execute(sql, treibstoff)
         conn.commit()
-        return cur.lastrowid
+        lastkey = cur.lastrowid
+        cur.close()
     except Error as e:
-        # print(f'Treibstoff existiert schon : {e}')
-        return None
+        # print(f'\nInfo : Treibstoff existiert schon \nError : "{e}"\n')
+        pass
+    return lastkey
 
 
 def create_preis(conn, preis):
+    lastkey = None
     sql = ''' INSERT INTO
-           preise(tankstelle_id,treibstoff_id,timestamp,preis,datum_zeit)
+           preise(Tankstelle_Id,Treibstoff_Id,Timestamp,Preis,Datum_Zeit)
            VALUES(?,?,?,?,?) '''
     # print(f'Preiseintrag : {preis}')
-    cur = conn.cursor()
     try:
+        cur = conn.cursor()
         cur.execute(sql, preis)
         conn.commit()
-        return cur.lastrowid
+        lastkey = cur.lastrowid
+        cur.close()
     except Error as e:
-        print(f'Preiseintrag existiert schon : {e}')
-        return None
+        print(f'\nFehler : Preiseintrag nicht erfolgreich\nError : "{e}"\n')
+    return lastkey
 
 
-def get_primk(conn, sql):
+def lese_datensatz(conn, sql):
     cur = conn.cursor()
     # print(f'SQL = {sql}')
     datensatz = cur.execute(sql).fetchone()
     # print(f'datensatz = {datensatz}')
     if datensatz is not None:
-        return datensatz[0]
+        return datensatz
     else:
         return None
 
 
-def check_preis(conn, preis):
-    cur = conn.cursor()
-    sql = f''' SELECT * FROM preise WHERE
-                tankstelle_id = "{preis[0]}" AND
-                treibstoff_id = "{preis[1]}" AND
-                timestamp = "{preis[2]}"'''
-    # print(f'\nSQL = {sql}')
-    datensatz = cur.execute(sql).fetchone()
-    # print(f'datensatz = {datensatz}')
-    if datensatz is not None:
-        return True
-    else:
-        return False
-
-
 def _main():
     show_header(G_HEADER_1, G_HEADER_2, __file__, G_OS)
-    if not init_database():
-        sys.exit(1)
-    for id in station_ids:
-        tankstellen.append(tankstelle(id))
-    for tanke in tankstellen:
-        tanke.preise_ermitteln()
-        tanke.drucken()
-        tanke.db_update()
+    stop = False
+    conn = create_connection(database)
+    if not conn:
+        stop = True
+    if not stop:
+        init_database(conn)
+        for id in station_ids:
+            tankstellen.append(tankstelle(id))
+        for tanke in tankstellen:
+            tanke.preise_ermitteln()
+            tanke.drucken()
+            tanke.db_update(conn)
+        conn.close()
+    else:
+        print(f'Programm abgebrochen\n')
 
 
 if __name__ == "__main__":
