@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-# Programm     : depot.py
-# Version      : 1.01
-# SW-Stand     : 21.04.2022
+# Programm     : depot_neu.py
+# Version      : 1.00
+# SW-Stand     : 24.04.2022
 # Autor        : Kanopus1958
 # Beschreibung : Aktueller Depotbestand
 
@@ -25,12 +25,12 @@ database = r'O:\01_Daten\DatenLocal\Datenbanken\SQLite\finanzanlage.db'
 HILFS_LISTE = ['Anz', 'Invest', 'Url', 'Bez', 'Datum',
                'Uhrzeit', 'Handel', 'Kurs', 'DiffEur',
                'DiffProz', 'Wert', 'G_V']
-bErrHTML = False
 wp_temp = {}
 del_id = []
 md = {}
 wps = {}
 summen = {}
+bErrHTML = False
 
 
 def einlesen_input():
@@ -43,8 +43,6 @@ def einlesen_input():
         for line in fobj:
             if line.strip().count('@@@'):
                 zeile = line.strip().split()
-                if '@@@URL@@@' in zeile:
-                    md['Url'] = zeile[1]
                 if '@@@KONTO@@@' in zeile:
                     md['Konto'] = float(zeile[1])
                 if '@@@KOSTEN@@@' in zeile:
@@ -53,7 +51,11 @@ def einlesen_input():
                     zeile = zeile[1:]
                     zeile[1] = int(zeile[1])
                     zeile[2] = float(zeile[2])
+                    zeile[3] = zeile[3] + zeile[4]
+                    zeile.pop()
                     wps[zeile[0]] = dict(zip(HILFS_LISTE, zeile[1:]))
+    # print(f'md : {md}')
+    # print(f'wps : {wps}')
     return True
 
 
@@ -181,17 +183,34 @@ def create_vermoeg(conn, vermoeg):
 
 def create_wertpapier(conn, wertpapier):
     lastkey = None
-    sql = ''' INSERT INTO wertpapiere(Kurz_Bez,Url,Bez,Handel)
-              VALUES(?,?,?,?) '''
-    try:
+    sql = f''' SELECT * FROM wertpapiere WHERE
+                Kurz_Bez = ? '''
+    sql_param = (wertpapier[0],)
+    datensatz = lese_datensatz(conn, sql, sql_param)
+    if not datensatz:
+        sql = ''' INSERT INTO wertpapiere(Kurz_Bez,Url,Bez,Handel)
+                VALUES(?,?,?,?) '''
+        try:
+            cur = conn.cursor()
+            cur.execute(sql, wertpapier)
+            conn.commit()
+            lastkey = cur.lastrowid
+            cur.close()
+        except Error as e:
+            print(f'\nInfo : Wertpapier existiert schon \nError : "{e}"\n')
+    else:
+        sql = ''' UPDATE wertpapiere
+                  SET Url = ?,
+                      Bez = ?,
+                      Handel = ?
+                  WHERE Id = ? '''
+        sql_param = wertpapier[1:]
+        sql_param.append(datensatz[0])
         cur = conn.cursor()
-        cur.execute(sql, wertpapier)
+        cur.execute(sql, sql_param)
         conn.commit()
-        lastkey = cur.lastrowid
         cur.close()
-    except Error as e:
-        # print(f'\nInfo : Wertpapier existiert schon \nError : "{e}"\n')
-        pass
+        lastkey = datensatz[0]
     return lastkey
 
 
@@ -279,15 +298,37 @@ def db_update(conn):
 
 def einlesen_webdaten(id):
     global bErrHTML
-    page = requests.get(md['Url'] + wps[id]['Url'])
+    page = requests.get(wps[id]['Url'])
     if page.status_code != 200:
-        bErrHTML = True
         print(f'{c.lightred}\nFehler bei Wertpapierabfrage "{id}"\n'
               f'Return-Code der HTML-Seite = {page.status_code}{c.reset}')
+        bErrHTML = True
         return False
+    if 'finanzen' in wps[id]['Url']:
+        if not web_finanzen(id, page):
+            print(f'{c.lightred}\nFehler bei Einlesen Web-Page "{id}"\n'
+                  f'Keine Werte gefunden{c.reset}')
+            bErrHTML = True
+            return False
+    elif 'fondsprofessionell' in wps[id]['Url']:
+        if not web_fondsprofessionell(id, page):
+            print(f'{c.lightred}\nFehler bei Einlesen Web-Page "{id}"\n'
+                  f'Keine Werte gefunden{c.reset}')
+            bErrHTML = True
+            return False
+    else:
+        print(f'{c.lightred}\nFehler bei Einlesen Web-Page "{id}"\n'
+              f'Keine entsprechende Einlesefunktion gefunden{c.reset}')
+        bErrHTML = True
+        return False
+    return True
+
+
+def web_finanzen(id, page):
     soup = BeautifulSoup(page.content, 'html.parser')
     wps[id].update({'Bez': soup.h1.string.strip()})
     zeilen = soup.find_all('div', class_="row quotebox")
+    werte = []
     for zeile in zeilen:
         werte = []
         for string in zeile.stripped_strings:
@@ -302,6 +343,8 @@ def einlesen_webdaten(id):
                 werte[3] = aktuelles_datum_kurz()
             else:
                 werte[4] = '00:00:00'
+    if len(werte) == 0:
+        return False
     wp_temp['Datum'] = werte[3]
     wp_temp['Uhrzeit'] = werte[4]
     wp_temp['Handel'] = werte[5]
@@ -312,9 +355,44 @@ def einlesen_webdaten(id):
     except ValueError:
         wp_temp['DiffEur'] = 0.0
         wp_temp['DiffProz'] = 0.0
-    wp_temp['Wert'] = round(float(wps[id]['Anz'] * float(werte[0])), 2)
+    wp_temp['Wert'] = round(float(wps[id]['Anz'] * wp_temp['Kurs']), 2)
     wp_temp['G_V'] = round(
-        float((wps[id]['Anz'] * float(werte[0])) - wps[id]['Invest']), 2)
+        float((wps[id]['Anz'] * wp_temp['Kurs']) - wps[id]['Invest']), 2)
+    # print(f"wp_temp : {wp_temp}")
+    wps[id].update(wp_temp)
+    return True
+
+
+def web_fondsprofessionell(id, page):
+    soup = BeautifulSoup(page.content, 'html.parser')
+    wps[id].update({'Bez': soup.h1.text})
+    zeile = soup.find('table')
+    werte = []
+    for string in zeile.stripped_strings:
+        werte.append(string)
+    if len(werte) == 0:
+        return False
+    del werte[2]
+    werte = [wert.replace(',', '.') for wert in werte]
+    werte = [wert.replace(' EUR', '') for wert in werte]
+    werte = [wert.replace(' am', '') for wert in werte]
+    werte = [wert.replace('(', '') for wert in werte]
+    werte = [wert.replace('%)', '') for wert in werte]
+    temp = werte[0].split(' ')
+    wp_temp['Datum'] = temp[1]
+    wp_temp['Uhrzeit'] = '00:00:00'
+    wp_temp['Handel'] = temp[0]
+    wp_temp['Kurs'] = float(werte[1])
+    temp = werte[2].split(' ')
+    try:
+        wp_temp['DiffEur'] = float(temp[0])
+        wp_temp['DiffProz'] = float(temp[1])
+    except ValueError:
+        wp_temp['DiffEur'] = 0.0
+        wp_temp['DiffProz'] = 0.0
+    wp_temp['Wert'] = round(float(wps[id]['Anz'] * wp_temp['Kurs']), 2)
+    wp_temp['G_V'] = round(
+        float((wps[id]['Anz'] * wp_temp['Kurs']) - wps[id]['Invest']), 2)
     # print(f"wp_temp : {wp_temp}")
     wps[id].update(wp_temp)
     return True
