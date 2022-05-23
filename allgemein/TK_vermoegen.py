@@ -1,64 +1,27 @@
 #!/usr/bin/env python3
 
-# Programm     : haushaltsbuch.py
+# Programm     : TK_vermoegen.py
 # Version      : 1.00
-# SW-Stand     : 26.04.2022
+# SW-Stand     : 20.05.2022
 # Autor        : Kanopus1958
-# Beschreibung : Haushaltsbuch (TKinter-GUI it SQLite-DB)
+# Beschreibung : Anzeige Depot-Vermögen (TKinter-GUI mit SQLite-DB)
 
 import os
 from tkinter import *
 from tkinter import ttk
-import sqlite3
-from sqlite3 import Error
+from rwm_class01 import MyDB
 
-database = r'O:\01_Daten\DatenLocal\Datenbanken\SQLite\finanzanlage.db'
+dbPath = r'O:\01_Daten\DatenLocal\Datenbanken\SQLite'
+dbFile = r'finanzanlage.db'
 
 winTitle = 'Anlage-Vermögen R.W.'
 winWidth = 312
 winHeight = 272
 
 
-def create_connection(db_file):
-    if os.path.isfile(db_file):
-        try:
-            conn = sqlite3.connect(db_file)
-            return conn
-        except Error as e:
-            print(f'\nFehler : Datenbankverbindung gescheitert\nError : "{e}"')
-        return None
-    else:
-        print(f'\nFehler : Datenbankdatei existiert nicht\nError : '
-              f'"{db_file}"')
-        return None
-
-
-def lese_datensaetze(conn, sql, sql_param):
-    cur = conn.cursor()
-    rows = cur.execute(sql, sql_param).fetchall()
-    if rows is not None:
-        return rows
-    else:
-        return None
-
-
-def get_vermoeg(conn):
-    sql = f''' SELECT * FROM vermoegen ORDER BY Timestamp ASC'''
-    sql_param = []
-    datensaetze = lese_datensaetze(conn, sql, sql_param)
-    if datensaetze:
-        return datensaetze
-    else:
-        return False
-
-
 class MyFrame:
 
     def __init__(self, root):
-        # for row in verm:
-        #     print(row)
-        # print(len(verm))
-        # print(verm[len(verm)-1])
         self.txt00Var = StringVar()
         self.txt01Var = StringVar()
         self.txt02Var = StringVar()
@@ -112,7 +75,7 @@ class MyFrame:
         btn02 = ttk.Button(content, text="Next >", command=self.btn02_Click)
         btn03 = ttk.Button(content, text="Last >|", command=self.btn03_Click)
         btn05 = ttk.Button(content, text="Refresh DB",
-                           command=self.btn05_Click)
+                           command=self.btn05_Click, default=NORMAL)
         btn08 = ttk.Button(content, text="Exit")
 
         content.grid(column=0, row=0, sticky=(N, S, E, W))
@@ -159,6 +122,7 @@ class MyFrame:
 
         btn08.bind(sequence='<ButtonPress-1>',
                    func=lambda e: root.destroy())
+        root.bind(sequence='<Return>', func=lambda e: btn05.invoke())
 
         btn05.focus()
 
@@ -182,7 +146,7 @@ class MyFrame:
 
     def btn05_Click(self, *args):
         global verm
-        verm = list(get_vermoeg(conn))
+        verm = get_vermoeg()
         if verm:
             self.pointer = len(verm) - 1
             self.SetCellContent(self.pointer)
@@ -205,17 +169,31 @@ class MyFrame:
         self.txt08Var.set(row[8])
 
 
+def get_vermoeg():
+    sql_select = f''' SELECT * FROM vermoegen ORDER BY ? ASC'''
+    sql_param = ["Timestamp", ]
+    datensaetze = list(db.dbReadAllRows(sql_select, sql_param))
+    if datensaetze:
+        return datensaetze
+    else:
+        return False
+
+
 def _main():
-    global conn
     global verm
-    conn = create_connection(database)
-    if conn:
-        verm = list(get_vermoeg(conn))
-        if verm:
-            root = Tk()
-            MyFrame(root)
-            root.mainloop()
-        conn.close()
+    global db
+    dbFullPath = dbPath + '\\' + dbFile
+    if not os.path.isfile(dbFullPath):
+        print(f'\nFehler : Datenbankdatei existiert nicht\nError  : '
+              f'"{dbFullPath}"')
+        print(f'Programm wurde abgebrochen')
+        return False
+    db = MyDB(dbFullPath)
+    verm = get_vermoeg()
+    if verm:
+        root = Tk()
+        MyFrame(root)
+        root.mainloop()
 
 
 if __name__ == "__main__":

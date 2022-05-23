@@ -1,18 +1,16 @@
 *******************************************************************************
 * Depot Parameter Datei    : depot.input                                      *
-* Version/Stand            : V01.00 15.03.2022                                *
+* Version/Stand            : V01.03 21.05.2022                                *
 * Beschreibung             : Depot-Basisdaten (Wertpapiere, Kosten, Konto)    *
 *******************************************************************************
 
-@@@URL@@@       https://www.finanzen.net
-
-@@@WP@@@        WP01     145     10_087.65  /aktien/mercedes-benz-aktie@stBoerse_STU
-@@@WP@@@        WP02    1175     50_010.23  /fonds/hausinvest-de0009807016
-@@@WP@@@        WP03     195     20_122.05  /fonds/klimavest-eltif-lu2183939003
-@@@WP@@@        WP04     140     29_721.99  /fonds/deka-industrie-40-cf-lu1508359509
-@@@WP@@@        WP05     250     20_072.50  /fonds/lbbw-global-warming-r-de000a0keym4
-@@@WP@@@        WP06    1739    249_747.01  /fonds/vv-strategie-bw-bank-ertrag-t4-lu0406291228
+@@@WP@@@        WP01     145     10_087.65  https://www.finanzen.net            /aktien/mercedes-benz-aktie@stBoerse_STU
+@@@WP@@@        WP02    1175     50_010.23  https://www.fondsprofessionell.de   /fonds/details/ISIN/DE0009807016/fondsID/FU_980701
+@@@WP@@@        WP03     195     20_122.05  https://www.fondsprofessionell.de   /fonds/details/ISIN/LU2183939003/fondsID/FU_100076035
+@@@WP@@@        WP04     140     29_721.99  https://www.fondsprofessionell.de   /fonds/details/ISIN/LU1508359509/fondsID/FU_100055481
+@@@WP@@@        WP05     250     20_072.50  https://www.fondsprofessionell.de   /fonds/details/ISIN/DE000A0KEYM4/fondsID/FU_100015126
+@@@WP@@@        WP06    1739    249_747.01  https://www.fondsprofessionell.de   /fonds/details/ISIN/LU0406291228/fondsID/FU_100064189
 
 @@@KONTO@@@     252.94
 
-@@@KOSTEN@@@    581.55
+@@@KOSTEN@@@    174.43

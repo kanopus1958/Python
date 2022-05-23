@@ -2,17 +2,16 @@
 
 # Programm     : tankstellen.py
 # Version      : 1.00
-# SW-Stand     : 21.03.2022
+# SW-Stand     : 21.05.2022
 # Autor        : Kanopus1958
 # Beschreibung : Ermittlung aktueller Treibstoffpreise
 
-from os import path
+import os
 import requests
 from bs4 import BeautifulSoup
 import time
-import sqlite3
-from sqlite3 import Error
 from rwm_mod01 import show_header, datum_zu_ts, ts_zu_datum
+from rwm_class01 import MyDB
 
 G_OS = ('Windows')
 G_HEADER_1 = '# Aktuelle Treibstoffpreise au'
@@ -23,16 +22,16 @@ station_ids = ['147028#', '28100', '52998']
 tankstellen = []
 
 
-class tankstelle():
-    def __init__(self, id):
-        self.daten = {'Id': id, 'Name': '', 'Strasse': '', 'Plz': '',
+class Tankstelle():
+    def __init__(self, url):
+        self.daten = {'Url': url, 'Name': '', 'Strasse': '', 'Plz': '',
                       'Stadt': '', 'Aktualisierung': '',
                       'Treibstoffe': {}}
 
     def preise_ermitteln(self):
         URL_basis = f'https://www.clever-tanken.de'
         URL_detail = f'/tankstelle_details/'
-        page = requests.get(URL_basis + URL_detail + self.daten['Id'])
+        page = requests.get(URL_basis + URL_detail + self.daten['Url'])
         if page.status_code != 200:
             print(f'Return-Code der HTML-Seite = {page.status_code}\n')
             return page.status_code
@@ -75,52 +74,75 @@ class tankstelle():
             print(f'   {k:<20s} : {self.daten["Treibstoffe"][k]:>8.3f} €')
         return
 
-    def db_update(self, conn):
-        tankstelle = (self.daten["Id"], self.daten["Name"],
+    def db_update(self):
+        tankstelle = (self.daten["Url"], self.daten["Name"],
                       self.daten["Plz"],
                       self.daten["Stadt"], self.daten["Strasse"])
-        tankstelle_id = create_tankstelle(conn, tankstelle)
-        if tankstelle_id is None:
-            sql = f''' SELECT * FROM tankstellen WHERE
-                    Url = "{self.daten["Id"]}" '''
-            tankstelle_id = lese_datensatz(conn, sql)[0]
+        tankstelle_id = self.create_tankstelle(tankstelle)
         # print(f'tankstelle_id = {tankstelle_id}')
         for k in self.daten['Treibstoffe'].keys():
             treibstoff = (k,)
-            treibstoff_id = create_treibstoff(conn, treibstoff)
-            if treibstoff_id is None:
-                sql = f''' SELECT * FROM treibstoffe WHERE
-                        Bezeichnung = "{k}" '''
-                treibstoff_id = lese_datensatz(conn, sql)[0]
-                # print(f'treibstoff_id = {treibstoff_id}')
+            treibstoff_id = self.create_treibstoff(treibstoff)
+            # print(f'treibstoff_id = {treibstoff_id}')
             preis = (tankstelle_id, treibstoff_id,
                      datum_zu_ts(self.daten["Aktualisierung"] + ':00'),
                      self.daten["Treibstoffe"][k],
                      self.daten["Aktualisierung"])
-            sql = f''' SELECT * FROM preise WHERE
-                        Tankstelle_Id = "{preis[0]}" AND
-                        Treibstoff_Id = "{preis[1]}" AND
-                        Timestamp = "{preis[2]}"'''
-            if not lese_datensatz(conn, sql):
-                preis_id = create_preis(conn, preis)
+            preis_id = self.create_preis(preis)
+            # print(f'preis_id = {preis_id}')
         return
 
+    def create_tankstelle(self, tankstelle):
+        lastkey = None
+        sql_select = ''' SELECT * FROM tankstellen WHERE
+                         Url = ? '''
+        sql_param = [tankstelle[0], ]
+        datensatz = db.dbReadOneRow(sql_select, sql_param)
+        if datensatz:
+            lastkey = datensatz[0]
+        else:
+            sql_insupddel = ''' INSERT INTO tankstellen(Url,Name,
+                                Plz,Stadt,Strasse)
+                                VALUES(?,?,?,?,?) '''
+            sql_param = tankstelle
+            lastkey = db.dbInsUpdDelRow(sql_insupddel, sql_param)
+        return lastkey
 
-def create_connection(db_file):
-    if path.isfile(db_file):
-        try:
-            conn = sqlite3.connect(db_file)
-            return conn
-        except Error as e:
-            print(f'\nFehler : Datenbankverbindung gescheitert\nError : "{e}"')
-        return None
-    else:
-        print(f'\nFehler : Datenbankdatei existiert nicht\nError : '
-              f'"{db_file}"')
-        return None
+    def create_treibstoff(self, treibstoff):
+        lastkey = None
+        sql_select = ''' SELECT * FROM treibstoffe WHERE
+                Bezeichnung = ? '''
+        sql_param = [treibstoff[0], ]
+        datensatz = db.dbReadOneRow(sql_select, sql_param)
+        if datensatz:
+            lastkey = datensatz[0]
+        else:
+            sql_insupddel = ''' INSERT INTO treibstoffe(Bezeichnung)
+                                VALUES(?) '''
+            sql_param = [treibstoff[0], ]
+            lastkey = db.dbInsUpdDelRow(sql_insupddel, sql_param)
+        return lastkey
+
+    def create_preis(self, preis):
+        lastkey = None
+        sql_select = ''' SELECT * FROM preise WHERE
+                         Tankstelle_Id = ? AND
+                         Treibstoff_Id = ? AND
+                         Timestamp = ? '''
+        sql_param = preis[:3]
+        datensatz = db.dbReadOneRow(sql_select, sql_param)
+        if datensatz:
+            lastkey = datensatz[0]
+        else:
+            sql_insupddel = ''' INSERT INTO preise(Tankstelle_Id,
+                                Treibstoff_Id,Timestamp,Preis,Datum_Zeit)
+                                VALUES(?,?,?,?,?) '''
+            sql_param = preis
+            lastkey = db.dbInsUpdDelRow(sql_insupddel, sql_param)
+        return lastkey
 
 
-def init_database(conn):
+def init_database():
     sql_create_tankstellen_table = '''
     CREATE TABLE IF NOT EXISTS tankstellen (
         Id      INTEGER PRIMARY KEY ASC AUTOINCREMENT,
@@ -157,101 +179,28 @@ def init_database(conn):
         REFERENCES treibstoffe (Id)
     );
     '''
-    create_table(conn, sql_create_tankstellen_table)
-    create_table(conn, sql_create_treibstoffe_table)
-    create_table(conn, sql_create_preise_table)
+    db.dbCreateDropTable(sql_create_tankstellen_table)
+    db.dbCreateDropTable(sql_create_treibstoffe_table)
+    db.dbCreateDropTable(sql_create_preise_table)
     return True
 
 
-def create_table(conn, create_table_sql):
-    try:
-        cur = conn.cursor()
-        cur.execute(create_table_sql)
-        conn.commit()
-        cur.close()
-    except Error as e:
-        print(f'\nFehler : Neuanlage Tabelle fehlgeschlagen\nError : "{e}"')
-
-
-def create_tankstelle(conn, tankstelle):
-    lastkey = None
-    sql = ''' INSERT INTO tankstellen(Url,Name,Plz,Stadt,Strasse)
-              VALUES(?,?,?,?,?) '''
-    # print(f'Tankstelle : {tankstelle}')
-    try:
-        cur = conn.cursor()
-        cur.execute(sql, tankstelle)
-        conn.commit()
-        lastkey = cur.lastrowid
-        cur.close()
-    except Error as e:
-        # print(f'\nInfo : Tankstelle existiert schon \nError : "{e}"\n')
-        pass
-    return lastkey
-
-
-def create_treibstoff(conn, treibstoff):
-    lastkey = None
-    sql = ''' INSERT INTO treibstoffe(Bezeichnung)
-              VALUES(?) '''
-    # print(f'Treibstoff : {treibstoff}')
-    try:
-        cur = conn.cursor()
-        cur.execute(sql, treibstoff)
-        conn.commit()
-        lastkey = cur.lastrowid
-        cur.close()
-    except Error as e:
-        # print(f'\nInfo : Treibstoff existiert schon \nError : "{e}"\n')
-        pass
-    return lastkey
-
-
-def create_preis(conn, preis):
-    lastkey = None
-    sql = ''' INSERT INTO
-           preise(Tankstelle_Id,Treibstoff_Id,Timestamp,Preis,Datum_Zeit)
-           VALUES(?,?,?,?,?) '''
-    # print(f'Preiseintrag : {preis}')
-    try:
-        cur = conn.cursor()
-        cur.execute(sql, preis)
-        conn.commit()
-        lastkey = cur.lastrowid
-        cur.close()
-    except Error as e:
-        print(f'\nFehler : Preiseintrag nicht erfolgreich\nError : "{e}"\n')
-    return lastkey
-
-
-def lese_datensatz(conn, sql):
-    cur = conn.cursor()
-    # print(f'SQL = {sql}')
-    datensatz = cur.execute(sql).fetchone()
-    # print(f'datensatz = {datensatz}')
-    if datensatz is not None:
-        return datensatz
-    else:
-        return None
-
-
 def _main():
+    global db
     show_header(G_HEADER_1, G_HEADER_2, __file__, G_OS)
-    stop = False
-    conn = create_connection(database)
-    if not conn:
-        stop = True
-    if not stop:
-        init_database(conn)
-        for id in station_ids:
-            tankstellen.append(tankstelle(id))
-        for tanke in tankstellen:
-            tanke.preise_ermitteln()
-            tanke.drucken()
-            tanke.db_update(conn)
-        conn.close()
-    else:
-        print(f'Programm abgebrochen\n')
+    if not os.path.isfile(database):
+        print(f'\nFehler : Datenbankdatei existiert nicht\nError  : '
+              f'"{database}"')
+        print(f'Programm wurde abgebrochen')
+        return False
+    db = MyDB(database)
+    init_database()
+    for url in station_ids:
+        tankstellen.append(Tankstelle(url))
+    for tanke in tankstellen:
+        tanke.preise_ermitteln()
+        tanke.drucken()
+        tanke.db_update()
 
 
 if __name__ == "__main__":

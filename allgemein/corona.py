@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
 
-# Programm     : corona_stgt.py
+# Programm     : corona.py
 # Version      : 1.00
-# SW-Stand     : 09.04.2022
+# SW-Stand     : 21.05.2022
 # Autor        : Kanopus1958
-# Beschreibung : Ermittlung Coronafallzahlen für Stuttgart
+# Beschreibung : Ermittlung Coronafallzahlen für Stuttgart und BRD
 
 import os
 import requests
 from bs4 import BeautifulSoup
 import time
-import sqlite3
-from sqlite3 import Error
 from rwm_mod01 import show_header, aktuelles_datum_kurz, \
     aktuelles_datum, aktuelle_uhrzeit, datum_zu_ts
 from rwm_steuerung import color as c
+from rwm_class01 import MyDB
 
 G_OS = ('Windows')
 G_HEADER_1 = '# Corona Fallzahlen für Stuttg'
@@ -43,21 +42,7 @@ cov_temp = {'Datum': "01.01.2022", 'Zeit': "00:00:00", 'Gebiet': "Bundesland",
             }
 
 
-def create_connection(db_file):
-    if os.path.isfile(db_file):
-        try:
-            conn = sqlite3.connect(db_file)
-            return conn
-        except Error as e:
-            print(f'\nFehler : Datenbankverbindung gescheitert\nError : "{e}"')
-        return None
-    else:
-        print(f'\nFehler : Datenbankdatei existiert nicht\nError : '
-              f'"{db_file}"')
-        return None
-
-
-def init_database(conn):
+def init_database():
     sql_create_fallzahlen_table = '''
     CREATE TABLE IF NOT EXISTS fallzahlen (
     Id              INTEGER PRIMARY KEY,
@@ -89,142 +74,101 @@ def init_database(conn):
     Tote            INTEGER NOT NULL
     );
     '''
-    create_table(conn, sql_create_fallzahlen_table)
-    create_table(conn, sql_create_rkifallzahlen_table)
+    db.dbCreateDropTable(sql_create_fallzahlen_table)
+    db.dbCreateDropTable(sql_create_rkifallzahlen_table)
     return True
 
 
-def create_table(conn, create_table_sql):
-    try:
-        cur = conn.cursor()
-        cur.execute(create_table_sql)
-        conn.commit()
-        cur.close()
-    except Error as e:
-        print(f'\nFehler : Neuanlage Tabelle fehlgeschlagen\nError : "{e}"')
-
-
-def lese_datensatz(conn, sql, sql_param):
-    cur = conn.cursor()
-    datensatz = cur.execute(sql, sql_param).fetchone()
-    if datensatz is not None:
-        return datensatz
-    else:
-        return None
-
-
-def create_fallzahl(conn, fallzahl):
+def update_fallzahl(fallzahl):
     lastkey = None
-    sql = f''' SELECT * FROM fallzahlen WHERE
-                Datum = ? '''
+    sql_select = f''' SELECT * FROM fallzahlen WHERE
+                      Datum = ? '''
     sql_param = [fallzahl[0], ]
-    datensatz = lese_datensatz(conn, sql, sql_param)
+    datensatz = db.dbReadOneRow(sql_select, sql_param)
     if not datensatz:
-        sql = ''' INSERT INTO fallzahlen (Datum,Timestamp,Datum_Zeit,
-                Faelle_Abs,Faelle_Delta,Neu7t_Abs,Neu7t_Vortag,
-                Inz7t_Abs,Inz7t_Vortag,Tote_Abs,Tote_Delta)
-                VALUES(?,?,?,?,?,?,?,?,?,?,?) '''
+        sql_insupddel = ''' INSERT INTO fallzahlen (Datum,Timestamp,Datum_Zeit,
+                            Faelle_Abs,Faelle_Delta,Neu7t_Abs,Neu7t_Vortag,
+                            Inz7t_Abs,Inz7t_Vortag,Tote_Abs,Tote_Delta)
+                            VALUES(?,?,?,?,?,?,?,?,?,?,?) '''
         sql_param = fallzahl
-        try:
-            cur = conn.cursor()
-            cur.execute(sql, sql_param)
-            conn.commit()
-            lastkey = cur.lastrowid
-            cur.close()
-        except Error as e:
-            print(f'\nInfo : Fallzahleneintrag '
-                  f'existiert schon \nError : "{e}"\n')
+        lastkey = db.dbInsUpdDelRow(sql_insupddel, sql_param)
     else:
-        sql = ''' UPDATE fallzahlen
-                  SET Timestamp = ?,
-                      Datum_Zeit = ?,
-                      Faelle_Abs = ?,
-                      Faelle_Delta = ?,
-                      Neu7t_Abs = ?,
-                      Neu7t_Vortag = ?,
-                      Inz7t_Abs = ?,
-                      Inz7t_Vortag = ?,
-                      Tote_Abs = ?,
-                      Tote_Delta = ?
-                  WHERE Id = ? '''
+        sql_insupddel = ''' UPDATE fallzahlen
+                            SET Timestamp = ?,
+                                Datum_Zeit = ?,
+                                Faelle_Abs = ?,
+                                Faelle_Delta = ?,
+                                Neu7t_Abs = ?,
+                                Neu7t_Vortag = ?,
+                                Inz7t_Abs = ?,
+                                Inz7t_Vortag = ?,
+                                Tote_Abs = ?,
+                                Tote_Delta = ?
+                            WHERE Id = ? '''
         sql_param = fallzahl[1:]
         sql_param.append(datensatz[0])
-        cur = conn.cursor()
-        cur.execute(sql, sql_param)
-        conn.commit()
-        cur.close()
+        db.dbInsUpdDelRow(sql_insupddel, sql_param)
         lastkey = datensatz[0]
     return lastkey
 
 
-def create_fallzahl_RKI(conn, fallzahl):
+def update_fallzahl_RKI(fallzahl):
     lastkey = None
-    sql = f''' SELECT * FROM rkifallzahlen WHERE
+    sql_select = f''' SELECT * FROM rkifallzahlen WHERE
                 Datum = ? AND Gebiet = ?'''
     sql_param = [fallzahl[0], fallzahl[3]]
-    datensatz = lese_datensatz(conn, sql, sql_param)
+    datensatz = db.dbReadOneRow(sql_select, sql_param)
     if not datensatz:
-        sql = ''' INSERT INTO rkifallzahlen (Datum,Timestamp,Datum_Zeit,
-                  Gebiet,Anzahl,Delta,Anz7t,
-                  Inz7t,Tote)
-                  VALUES(?,?,?,?,?,?,?,?,?) '''
+        sql_insupddel = ''' INSERT INTO rkifallzahlen (Datum,Timestamp,
+                            Datum_Zeit,Gebiet,Anzahl,Delta,Anz7t,
+                            Inz7t,Tote)
+                            VALUES(?,?,?,?,?,?,?,?,?) '''
         sql_param = fallzahl
-        try:
-            cur = conn.cursor()
-            cur.execute(sql, sql_param)
-            conn.commit()
-            lastkey = cur.lastrowid
-            cur.close()
-        except Error as e:
-            print(f'\nInfo : Fallzahleneintrag '
-                  f'existiert schon \nError : "{e}"\n')
+        lastkey = db.dbInsUpdDelRow(sql_insupddel, sql_param)
     else:
-        sql = ''' UPDATE rkifallzahlen
-                  SET Timestamp = ?,
-                      Datum_Zeit = ?,
-                      Gebiet = ?,
-                      Anzahl = ?,
-                      Delta = ?,
-                      Anz7t = ?,
-                      Inz7t = ?,
-                      Tote = ?
-                  WHERE Id = ? '''
+        sql_insupddel = ''' UPDATE rkifallzahlen
+                            SET Timestamp = ?,
+                                Datum_Zeit = ?,
+                                Gebiet = ?,
+                                Anzahl = ?,
+                                Delta = ?,
+                                Anz7t = ?,
+                                Inz7t = ?,
+                                Tote = ?
+                            WHERE Id = ? '''
         sql_param = fallzahl[1:]
         sql_param.append(datensatz[0])
-        cur = conn.cursor()
-        cur.execute(sql, sql_param)
-        conn.commit()
-        cur.close()
+        db.dbInsUpdDelRow(sql_insupddel, sql_param)
         lastkey = datensatz[0]
     return lastkey
 
 
-def db_update(conn):
+def db_update():
     datum_zeit = cov["Datum"] + ' ' + cov["Zeit"]
-    datensatz_fallzahl = [cov["Datum"], datum_zu_ts(datum_zeit),
-                          datum_zeit,
-                          cov["Faelle_Abs"],
-                          cov["Faelle_Delta"],
-                          cov["Neu7t_Abs"],
-                          cov["Neu7t_Vortag"],
-                          cov["Inz7t_Abs"],
-                          cov["Inz7t_Vortag"],
-                          cov["Tote_Abs"],
-                          cov["Tote_Delta"]
-                          ]
-    lastkey = create_fallzahl(conn, datensatz_fallzahl)
+    fallzahl = [cov["Datum"], datum_zu_ts(datum_zeit),
+                datum_zeit,
+                cov["Faelle_Abs"],
+                cov["Faelle_Delta"],
+                cov["Neu7t_Abs"],
+                cov["Neu7t_Vortag"],
+                cov["Inz7t_Abs"],
+                cov["Inz7t_Vortag"],
+                cov["Tote_Abs"],
+                cov["Tote_Delta"]
+                ]
+    update_fallzahl(fallzahl)
     for z in covRKI:
         datum_zeit = z["Datum"] + ' ' + z["Zeit"]
-        datensatz_rkifallzahl = [z["Datum"], datum_zu_ts(datum_zeit),
-                                 datum_zeit,
-                                 z["Gebiet"],
-                                 z["Anzahl"],
-                                 z["Delta"],
-                                 z["Anz7t"],
-                                 z["Inz7t"],
-                                 z["Tote"]
-                                 ]
-        lastkey = create_fallzahl_RKI(conn, datensatz_rkifallzahl)
+        fallzahl_rki = [z["Datum"], datum_zu_ts(datum_zeit),
+                        datum_zeit,
+                        z["Gebiet"],
+                        z["Anzahl"],
+                        z["Delta"],
+                        z["Anz7t"],
+                        z["Inz7t"],
+                        z["Tote"]
+                        ]
+        update_fallzahl_RKI(fallzahl_rki)
 
 
 def einlesen_webdaten():
@@ -391,20 +335,19 @@ def druckdaten():
 
 
 def _main():
+    global db
     show_header(G_HEADER_1, G_HEADER_2, __file__, G_OS)
-    stop = False
-    conn = create_connection(database)
-    if not conn:
-        stop = True
-    if not stop:
-        init_database(conn)
-        if einlesen_webdaten():
-            if einlesen_webdaten_RKI():
-                print(f'{druckdaten()}')
-                db_update(conn)
-                conn.close()
-    else:
-        print(f'Programm abgebrochen\n')
+    if not os.path.isfile(database):
+        print(f'\nFehler : Datenbankdatei existiert nicht\nError  : '
+              f'"{database}"')
+        print(f'Programm wurde abgebrochen')
+        return False
+    db = MyDB(database)
+    init_database()
+    if einlesen_webdaten():
+        if einlesen_webdaten_RKI():
+            print(f'{druckdaten()}')
+            db_update()
 
 
 if __name__ == "__main__":
