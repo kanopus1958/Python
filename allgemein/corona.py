@@ -2,7 +2,7 @@
 
 # Programm     : corona.py
 # Version      : 1.00
-# SW-Stand     : 21.05.2022
+# SW-Stand     : 04.06.2022
 # Autor        : Kanopus1958
 # Beschreibung : Ermittlung Coronafallzahlen für Stuttgart und BRD
 
@@ -250,10 +250,10 @@ def aufbereitung_daten(datum_zeile, fallzahlen_zeile):
     fallzahlen_zeile = [n.replace('.', '') for n in fallzahlen_zeile]
     fallzahlen_zeile = [n.replace(',', '.') for n in fallzahlen_zeile]
     # print(f'\nfallzahlen_zeile 2 : {fallzahlen_zeile}')
-    faelle = fallzahlen_zeile[0]
-    neu7t = fallzahlen_zeile[1]
-    inz7t = fallzahlen_zeile[2]
-    tote = fallzahlen_zeile[3]
+    faelle = fallzahlen_zeile[0].strip()
+    neu7t = fallzahlen_zeile[1].strip()
+    inz7t = fallzahlen_zeile[2].strip()
+    tote = fallzahlen_zeile[3].strip()
     # print(f'\nfaelle : {faelle}\n')
     # print(f'neu7t : {neu7t}\n')
     # print(f'inz7t : {inz7t}\n')

@@ -2,7 +2,7 @@
 
 # Programm     : TK_vermoegen.py
 # Version      : 1.00
-# SW-Stand     : 20.05.2022
+# SW-Stand     : 23.05.2022
 # Autor        : Kanopus1958
 # Beschreibung : Anzeige Depot-Vermögen (TKinter-GUI mit SQLite-DB)
 
@@ -16,24 +16,24 @@ dbFile = r'finanzanlage.db'
 
 winTitle = 'Anlage-Vermögen R.W.'
 winWidth = 312
-winHeight = 272
+winHeight = 300
+winStatusText = 'Version 1.00 (2022)'
 
 
-class MyFrame:
+class FrmMain:
 
     def __init__(self, root):
-        self.txt00Var = StringVar()
-        self.txt01Var = StringVar()
-        self.txt02Var = StringVar()
-        self.txt03Var = StringVar()
-        self.txt04Var = StringVar()
-        self.txt05Var = StringVar()
-        self.txt06Var = StringVar()
-        self.txt07Var = StringVar()
-        self.txt08Var = StringVar()
-
-        self.pointer = len(verm) - 1
-        self.SetCellContent(self.pointer)
+        self.txtIdVar = StringVar()
+        self.txtDatumVar = StringVar()
+        self.txtTimestampVar = StringVar()
+        self.txtDatum_ZeitVar = StringVar()
+        self.txtKontoVar = StringVar()
+        self.txtKostenVar = StringVar()
+        self.txtWertVar = StringVar()
+        self.txtInvestVar = StringVar()
+        self.txtG_VVar = StringVar()
+        self.pointer = len(datatable) - 1
+        self.RefreshFormData(self.pointer)
 
         root.title(winTitle)
         scrWidth = root.winfo_screenwidth()
@@ -42,70 +42,82 @@ class MyFrame:
         y_cor = int((scrHeight/2) - (winHeight/2))
         root.geometry("{}x{}+{}+{}".format(winWidth,
                       winHeight, x_cor, y_cor))
-        root.minsize(winWidth, winHeight)
-        root.maxsize(winWidth, winHeight)
+        root.resizable(width=0, height=0)
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=1)
 
         content = ttk.Frame(root, borderwidth=5, relief="sunken",
                             padding=(3, 3, 3, 3))
 
-        lbl00 = ttk.Label(content, text="Id")
-        lbl01 = ttk.Label(content, text="Datum")
-        lbl02 = ttk.Label(content, text="Timestamp")
-        lbl03 = ttk.Label(content, text="Datum_Zeit")
-        lbl04 = ttk.Label(content, text="Konto")
-        lbl05 = ttk.Label(content, text="Kosten")
-        lbl06 = ttk.Label(content, text="Wert")
-        lbl07 = ttk.Label(content, text="Invest")
-        lbl08 = ttk.Label(content, text="G_V")
+        lblId = ttk.Label(content, text="Id")
+        lblDatum = ttk.Label(content, text="Datum")
+        lblTimestamp = ttk.Label(content, text="Timestamp")
+        lblDatum_Zeit = ttk.Label(content, text="Datum_Zeit")
+        lblKonto = ttk.Label(content, text="Konto")
+        lblKosten = ttk.Label(content, text="Kosten")
+        lblWert = ttk.Label(content, text="Wert")
+        lblInvest = ttk.Label(content, text="Invest")
+        lblG_V = ttk.Label(content, text="G_V")
+        lblStatus = ttk.Label(content, text=winStatusText, justify=RIGHT)
 
-        txt00 = ttk.Entry(content, textvariable=self.txt00Var, justify=RIGHT)
-        txt01 = ttk.Entry(content, textvariable=self.txt01Var, justify=RIGHT)
-        txt02 = ttk.Entry(content, textvariable=self.txt02Var, justify=RIGHT)
-        txt03 = ttk.Entry(content, textvariable=self.txt03Var, justify=RIGHT)
-        txt04 = ttk.Entry(content, textvariable=self.txt04Var, justify=RIGHT)
-        txt05 = ttk.Entry(content, textvariable=self.txt05Var, justify=RIGHT)
-        txt06 = ttk.Entry(content, textvariable=self.txt06Var, justify=RIGHT)
-        txt07 = ttk.Entry(content, textvariable=self.txt07Var, justify=RIGHT)
-        txt08 = ttk.Entry(content, textvariable=self.txt08Var, justify=RIGHT)
+        txtId = ttk.Entry(content, textvariable=self.txtIdVar, justify=RIGHT)
+        txtDatum = ttk.Entry(
+            content, textvariable=self.txtDatumVar, justify=RIGHT)
+        txtTimestamp = ttk.Entry(
+            content, textvariable=self.txtTimestampVar, justify=RIGHT)
+        txtDatum_Zeit = ttk.Entry(
+            content, textvariable=self.txtDatum_ZeitVar, justify=RIGHT)
+        txtKonto = ttk.Entry(
+            content, textvariable=self.txtKontoVar, justify=RIGHT)
+        txtKosten = ttk.Entry(
+            content, textvariable=self.txtKostenVar, justify=RIGHT)
+        txtWert = ttk.Entry(
+            content, textvariable=self.txtWertVar, justify=RIGHT)
+        txtInvest = ttk.Entry(
+            content, textvariable=self.txtInvestVar, justify=RIGHT)
+        txtG_V = ttk.Entry(content, textvariable=self.txtG_VVar, justify=RIGHT)
 
-        btn00 = ttk.Button(content, text="|< First", command=self.btn00_Click)
-        btn01 = ttk.Button(content, text="< Prev", command=self.btn01_Click)
-        btn02 = ttk.Button(content, text="Next >", command=self.btn02_Click)
-        btn03 = ttk.Button(content, text="Last >|", command=self.btn03_Click)
-        btn05 = ttk.Button(content, text="Refresh DB",
-                           command=self.btn05_Click, default=NORMAL)
-        btn08 = ttk.Button(content, text="Exit")
+        cmdFirst = ttk.Button(content, text="|< First",
+                              command=self.cmdFirst_Click)
+        cmdPrev = ttk.Button(content, text="< Prev",
+                             command=self.cmdPrev_Click)
+        cmdNext = ttk.Button(content, text="Next >",
+                             command=self.cmdNext_Click)
+        cmdLast = ttk.Button(content, text="Last >|",
+                             command=self.cmdLast_Click)
+        cmdRefresh = ttk.Button(content, text="Refresh DB",
+                                command=self.cmdRefresh_Click, default=NORMAL)
+        cmdExit = ttk.Button(content, text="Exit")
 
         content.grid(column=0, row=0, sticky=(N, S, E, W))
 
-        lbl00.grid(row=0, column=0, sticky=(W))
-        lbl01.grid(row=1, column=0, sticky=(W))
-        lbl02.grid(row=2, column=0, sticky=(W))
-        lbl03.grid(row=3, column=0, sticky=(W))
-        lbl04.grid(row=4, column=0, sticky=(W))
-        lbl05.grid(row=5, column=0, sticky=(W))
-        lbl06.grid(row=6, column=0, sticky=(W))
-        lbl07.grid(row=7, column=0, sticky=(W))
-        lbl08.grid(row=8, column=0, sticky=(W))
+        lblId.grid(row=0, column=0, sticky=(W))
+        lblDatum.grid(row=1, column=0, sticky=(W))
+        lblTimestamp.grid(row=2, column=0, sticky=(W))
+        lblDatum_Zeit.grid(row=3, column=0, sticky=(W))
+        lblKonto.grid(row=4, column=0, sticky=(W))
+        lblKosten.grid(row=5, column=0, sticky=(W))
+        lblWert.grid(row=6, column=0, sticky=(W))
+        lblInvest.grid(row=7, column=0, sticky=(W))
+        lblG_V.grid(row=8, column=0, sticky=(W))
+        lblStatus.grid(row=9, column=1, sticky=(E))
 
-        txt00.grid(row=0, column=1)
-        txt01.grid(row=1, column=1)
-        txt02.grid(row=2, column=1)
-        txt03.grid(row=3, column=1)
-        txt04.grid(row=4, column=1)
-        txt05.grid(row=5, column=1)
-        txt06.grid(row=6, column=1)
-        txt07.grid(row=7, column=1)
-        txt08.grid(row=8, column=1)
+        txtId.grid(row=0, column=1)
+        txtDatum.grid(row=1, column=1)
+        txtTimestamp.grid(row=2, column=1)
+        txtDatum_Zeit.grid(row=3, column=1)
+        txtKonto.grid(row=4, column=1)
+        txtKosten.grid(row=5, column=1)
+        txtWert.grid(row=6, column=1)
+        txtInvest.grid(row=7, column=1)
+        txtG_V.grid(row=8, column=1)
 
-        btn00.grid(row=0, column=2)
-        btn01.grid(row=1, column=2)
-        btn02.grid(row=2, column=2)
-        btn03.grid(row=3, column=2)
-        btn05.grid(row=5, column=2)
-        btn08.grid(row=8, column=2)
+        cmdFirst.grid(row=0, column=2)
+        cmdPrev.grid(row=1, column=2)
+        cmdNext.grid(row=2, column=2)
+        cmdLast.grid(row=3, column=2)
+        cmdRefresh.grid(row=5, column=2)
+        cmdExit.grid(row=8, column=2)
 
         content.rowconfigure(0, pad=5)
         content.rowconfigure(1, pad=5)
@@ -116,63 +128,64 @@ class MyFrame:
         content.rowconfigure(6, pad=5)
         content.rowconfigure(7, pad=5)
         content.rowconfigure(8, pad=5)
+        content.rowconfigure(9, pad=15)
         content.columnconfigure(0, pad=10)
         content.columnconfigure(1, pad=0)
         content.columnconfigure(2, pad=40)
 
-        btn08.bind(sequence='<ButtonPress-1>',
-                   func=lambda e: root.destroy())
-        root.bind(sequence='<Return>', func=lambda e: btn05.invoke())
+        cmdExit.bind(sequence='<ButtonPress-1>',
+                     func=lambda e: root.destroy())
+        root.bind(sequence='<Return>', func=lambda e: cmdRefresh.invoke())
 
-        btn05.focus()
+        cmdRefresh.focus()
 
-    def btn00_Click(self, *args):
+    def cmdFirst_Click(self, *args):
         self.pointer = 0
-        self.SetCellContent(self.pointer)
+        self.RefreshFormData(self.pointer)
 
-    def btn01_Click(self, *args):
+    def cmdPrev_Click(self, *args):
         if self.pointer > 0:
             self.pointer -= 1
-        self.SetCellContent(self.pointer)
+        self.RefreshFormData(self.pointer)
 
-    def btn02_Click(self, *args):
-        if self.pointer < (len(verm) - 1):
+    def cmdNext_Click(self, *args):
+        if self.pointer < (len(datatable) - 1):
             self.pointer += 1
-        self.SetCellContent(self.pointer)
+        self.RefreshFormData(self.pointer)
 
-    def btn03_Click(self, *args):
-        self.pointer = len(verm) - 1
-        self.SetCellContent(self.pointer)
+    def cmdLast_Click(self, *args):
+        self.pointer = len(datatable) - 1
+        self.RefreshFormData(self.pointer)
 
-    def btn05_Click(self, *args):
-        global verm
-        verm = get_vermoeg()
-        if verm:
-            self.pointer = len(verm) - 1
-            self.SetCellContent(self.pointer)
+    def cmdRefresh_Click(self, *args):
+        global datatable
+        datatable = GetDataTable()
+        if datatable:
+            self.pointer = len(datatable) - 1
+            self.RefreshFormData(self.pointer)
 
-    def SetCellContent(self, poin):
-        row = list(verm[poin])
+    def RefreshFormData(self, poin):
+        row = list(datatable[poin])
         for i in range(0, 4):
             row[i] = str(row[i])
         for i in range(4, 9):
             row[i] = f"{row[i]:,}".replace('.', '#').replace(
                 ',', '.').replace('#', ',') + ' €'
-        self.txt00Var.set(row[0])
-        self.txt01Var.set(row[1])
-        self.txt02Var.set(row[2])
-        self.txt03Var.set(row[3])
-        self.txt04Var.set(row[4])
-        self.txt05Var.set(row[5])
-        self.txt06Var.set(row[6])
-        self.txt07Var.set(row[7])
-        self.txt08Var.set(row[8])
+        self.txtIdVar.set(row[0])
+        self.txtDatumVar.set(row[1])
+        self.txtTimestampVar.set(row[2])
+        self.txtDatum_ZeitVar.set(row[3])
+        self.txtKontoVar.set(row[4])
+        self.txtKostenVar.set(row[5])
+        self.txtWertVar.set(row[6])
+        self.txtInvestVar.set(row[7])
+        self.txtG_VVar.set(row[8])
 
 
-def get_vermoeg():
+def GetDataTable():
     sql_select = f''' SELECT * FROM vermoegen ORDER BY ? ASC'''
     sql_param = ["Timestamp", ]
-    datensaetze = list(db.dbReadAllRows(sql_select, sql_param))
+    datensaetze = db.dbReadAllRows(sql_select, sql_param)
     if datensaetze:
         return datensaetze
     else:
@@ -180,7 +193,7 @@ def get_vermoeg():
 
 
 def _main():
-    global verm
+    global datatable
     global db
     dbFullPath = dbPath + '\\' + dbFile
     if not os.path.isfile(dbFullPath):
@@ -189,10 +202,10 @@ def _main():
         print(f'Programm wurde abgebrochen')
         return False
     db = MyDB(dbFullPath)
-    verm = get_vermoeg()
-    if verm:
+    datatable = GetDataTable()
+    if datatable:
         root = Tk()
-        MyFrame(root)
+        FrmMain(root)
         root.mainloop()
 
 

@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{91cf310b-7726-4f06-9890-0ab3eb1ad49a}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>allgemein\tankstellen.py</StartupFile>
+    <SearchPath>mod_rw\</SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId>Global|PythonCore|3.10</InterpreterId>
+    <TestFramework>Pytest</TestFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="allgemein\besonderezahl.py" />
+    <Compile Include="allgemein\corona.py" />
+    <Compile Include="allgemein\dauerping.py" />
+    <Compile Include="allgemein\db_sqlite.py" />
+    <Compile Include="allgemein\depot.py" />
+    <Compile Include="allgemein\depot_bestand.py" />
+    <Compile Include="allgemein\lissajous.py" />
+    <Compile Include="allgemein\primzahlen.py" />
+    <Compile Include="allgemein\pystress.py" />
+    <Compile Include="allgemein\pythagoras.py" />
+    <Compile Include="allgemein\reiskorn.py" />
+    <Compile Include="allgemein\schildkroete.py" />
+    <Compile Include="allgemein\sensoren.py" />
+    <Compile Include="allgemein\stresscpu.py" />
+    <Compile Include="allgemein\synchronisation.py" />
+    <Compile Include="allgemein\systeminfo.py" />
+    <Compile Include="allgemein\tankstellen.py" />
+    <Compile Include="allgemein\test_eingabe.py" />
+    <Compile Include="allgemein\test_klassen.py" />
+    <Compile Include="allgemein\test_mail.py" />
+    <Compile Include="allgemein\test_prozesse.py" />
+    <Compile Include="allgemein\test_psutil.py" />
+    <Compile Include="allgemein\test_pygame.py" />
+    <Compile Include="allgemein\test_pynput.py" />
+    <Compile Include="allgemein\test_tastatur.py" />
+    <Compile Include="allgemein\test_test.py" />
+    <Compile Include="allgemein\test_threads.py" />
+    <Compile Include="allgemein\TK_vermoegen.py" />
+    <Compile Include="allgemein\turmhanoi.py" />
+    <Compile Include="code_template.py" />
+    <Compile Include="mod_rw\rwm_class01.py" />
+    <Compile Include="mod_rw\rwm_credentials01.py" />
+    <Compile Include="mod_rw\rwm_mod01.py" />
+    <Compile Include="mod_rw\rwm_steuerung.py" />
+    <Compile Include="robot01\L298NHBridgePCA9685.py" />
+    <Compile Include="robot01\robot-control.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="allgemein\dauerping.input" />
+    <Content Include="allgemein\depot.input" />
+    <Content Include="allgemein\synchronisation.input" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="allgemein" />
+    <Folder Include="mod_rw" />
+    <Folder Include="robot01" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.10" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>

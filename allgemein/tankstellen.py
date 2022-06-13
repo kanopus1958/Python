@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Programm     : tankstellen.py
-# Version      : 1.00
+# Version      : 1.01
 # SW-Stand     : 21.05.2022
 # Autor        : Kanopus1958
 # Beschreibung : Ermittlung aktueller Treibstoffpreise
@@ -31,10 +31,16 @@ class Tankstelle():
     def preise_ermitteln(self):
         URL_basis = f'https://www.clever-tanken.de'
         URL_detail = f'/tankstelle_details/'
-        page = requests.get(URL_basis + URL_detail + self.daten['Url'])
+        try:
+            page = requests.get(url_akt := URL_basis +
+                                URL_detail + self.daten['Url'])
+        except requests.exceptions.RequestException as ex:
+            print(f"Fehler beim Laden von\n{url_akt}\n\n{ex}")
+            return False
         if page.status_code != 200:
-            print(f'Return-Code der HTML-Seite = {page.status_code}\n')
-            return page.status_code
+            print(
+                f'Return-Code der HTML-Seite = {page.status_code}\n{url_akt}')
+            return False
         soup = BeautifulSoup(page.content, 'html.parser')
         self.daten['Name'] = soup.find('span', class_="strong-title").text
         t_adresse = soup.find(
@@ -61,7 +67,7 @@ class Tankstelle():
                 self.daten['Treibstoffe'][fuel_type] = fuel_price
             except(ValueError):
                 pass
-        return
+        return True
 
     def drucken(self):
         # print(f'\nself.daten : {self.daten}')
@@ -198,7 +204,8 @@ def _main():
     for url in station_ids:
         tankstellen.append(Tankstelle(url))
     for tanke in tankstellen:
-        tanke.preise_ermitteln()
+        if not tanke.preise_ermitteln():
+            return False
         tanke.drucken()
         tanke.db_update()
 
